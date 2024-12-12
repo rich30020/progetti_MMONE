@@ -29,7 +29,7 @@ class BankAccount {
     }
 }
 
-$account = new BankAccount("41641416", 10550);
+$account = new BankAccount("1", 10550);
 echo "Numero del Conto: " . $account->accountNumber . "</br><hr>";
 echo "Saldo iniziale: " . $account->balance?> €</br><hr>
 <?php
