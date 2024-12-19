@@ -13,7 +13,8 @@ $library = [
     'historical_novel' => [],
     'adventure_action' => [],
     'fantasy' => [],
-    'science_fiction' => []
+    'science_fiction' => [],
+    'horror' => []
 ];
 
 // Funzione per aggiungere libri alla libreria
@@ -46,9 +47,11 @@ function loadLibraryFromCSV($filename) {
     if (!file_exists($filename)) {
         return $library;
     }
-
     $file = fopen($filename, 'r');
+
+    //legge tutte le righe
     while (($data = fgetcsv($file)) !== false) {
+        // Per ogni riga, aggiunge un nuovo elemento all'array $library. name=>[1]
         $library[$data[0]][] = ['name' => $data[1]];
     }
     fclose($file);
@@ -56,11 +59,12 @@ function loadLibraryFromCSV($filename) {
     return $library;
 }
 
-// Carica la libreria dal CSV se la sessione non è impostata
+// Carica la libreria dal CSV
 if (!isset($_SESSION['library'])) {
     $_SESSION['library'] = loadLibraryFromCSV($filename);
 }
 $library = &$_SESSION['library'];
+
 
 // Gestisci azioni di POST (selezione del libro o reset della libreria)
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -92,7 +96,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'historical_novel' => [],
             'adventure_action' => [],
             'fantasy' => [],
-            'science_fiction' => []
+            'science_fiction' => [],
+            'horror' => []
         ];
 
         // Aggiungi libri di esempio
@@ -100,27 +105,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         addBook($library, 'historical_novel', 'L\'Impero Romano');
         addBook($library, 'historical_novel', 'Guerra e Pace');
         addBook($library, 'historical_novel', 'I Miserabili');
+        addBook($library, 'historical_novel', 'Promessi Sposi');
+        addBook($library, 'historical_novel', 'Il Nome della Rosa');
+        addBook($library, 'historical_novel', 'I Pilastri della Terra ');
+        addBook($library, 'historical_novel', 'Memorie di Adriano');
 
         addBook($library, 'adventure_action', 'Il Tesoro dell\'Isola');
         addBook($library, 'adventure_action', 'Indiana Jones');
         addBook($library, 'adventure_action', 'Lara Croft');
         addBook($library, 'adventure_action', 'Il Gladiatore');
+        addBook($library, 'adventure_action', 'Il Nome della Rosa');
+        addBook($library, 'adventure_action', 'Il Codice da Vinci');
+        addBook($library, 'adventure_action', 'Il Trono di Spade');
+        addBook($library, 'adventure_action', 'La Ragazza con il Tatuaggio del Drago');
 
         addBook($library, 'fantasy', 'Il Signore degli Anelli');
         addBook($library, 'fantasy', 'Harry Potter');
         addBook($library, 'fantasy', 'Le Cronache di Narnia');
         addBook($library, 'fantasy', 'Il Trono di Spade');
-
+        addBook($library, 'fantasy', 'La Ruota del Tempo');
+        addBook($library, 'fantasy', 'Il Nome del Vento');
+        addBook($library, 'fantasy', 'La Bussola d\'Oro');
+        
         addBook($library, 'science_fiction', 'Dune');
         addBook($library, 'science_fiction', 'Blade Runner');
         addBook($library, 'science_fiction', '1984');
         addBook($library, 'science_fiction', 'Il Mondo Nuovo');
+        addBook($library, 'science_fiction', 'I Figli di Andromeda');
+        addBook($library, 'science_fiction', 'La Guerra dei Mondi');
+        addBook($library, 'science_fiction', 'Neuromante');
+        addBook($library, 'science_fiction', 'Il Marziano');
+
+        addBook($library, 'horror', 'Dracula');
+        addBook($library, 'horror', 'Frankenstein');
+        addBook($library, 'horror', 'Il Ritratto di Dorian Gray');
+        addBook($library, 'horror', 'L\'Incubo di Hill House');
+        addBook($library, 'horror', 'Il Castello di Otranto');
+        addBook($library, 'horror', 'Jane Eyre');
+        addBook($library, 'horror', 'Il Fantasma di Canterville');
+        addBook($library, 'horror', 'Carmilla');
 
         saveLibraryToCSV($filename, $library);
         $_SESSION['library'] = $library;
         unset($_SESSION['selected_genres']);
         header("Refresh:0");
-    }
+    }      
 }
 ?>
 
@@ -136,33 +165,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container">
         <div class="sidebar">
             <h2>Tipologie di Libri</h2>
+            <?php if (count($library['historical_novel']) > 0): ?>
             <form method="post">
                 <input type="hidden" name="genre" value="historical_novel">
                 <button type="submit" name="select_genre">Romanzi Storici</button>
             </form>
+            <?php endif; ?>
+            <?php if (count($library['adventure_action']) > 0): ?>
             <form method="post">
                 <input type="hidden" name="genre" value="adventure_action">
                 <button type="submit" name="select_genre">Avventura e Azione</button>
             </form>
+            <?php endif; ?>
+            <?php if (count($library['fantasy']) > 0): ?>
             <form method="post">
                 <input type="hidden" name="genre" value="fantasy">
                 <button type="submit" name="select_genre">Fantasy</button>
             </form>
+            <?php endif; ?>
+            <?php if (count($library['science_fiction']) > 0): ?>
             <form method="post">
                 <input type="hidden" name="genre" value="science_fiction">
                 <button type="submit" name="select_genre">Fantascienza</button>
             </form>
+            <?php endif; ?>
+            <?php if (count($library['horror']) > 0): ?>
+            <form method="post">
+                <input type="hidden" name="genre" value="horror">
+                <button type="submit" name="select_genre">Horror</button>
+            </form>
+            <?php endif; ?>
             <form method="post" style="margin-top: 20px;">
                 <button type="submit" name="reset" class="reset-btn">Ricomponi Libreria</button>
             </form>
-        </div>
+            </div>
         <div class="main">
             <h1>Gestione Libreria</h1>
             <p>Ciao <?php echo $_SESSION["username"]; ?>, seleziona una categoria di libri!</p>
             <?php if (isset($_SESSION['selected_genres'])): ?>
                 <div class="library-container">
-                <?php foreach ($_SESSION['selected_genres'] as $selectedGenre): ?>
-                        <h2>Libri in <?= ucfirst(string: str_replace('_', ' ', $selectedGenre)); ?></h2>
+                    <?php foreach ($_SESSION['selected_genres'] as $selectedGenre): ?>
+                        <h2>Libri in <?= ucfirst($selectedGenre); ?></h2>
                         <?php foreach ($library[$selectedGenre] as $index => $book): ?>
                             <div class="book">
                                 <form method="post">
@@ -180,3 +223,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
+
