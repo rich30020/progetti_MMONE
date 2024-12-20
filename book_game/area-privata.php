@@ -128,7 +128,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         addBook($library, 'fantasy', 'Il Trono di Spade', "https://www.ibs.it/images/9788804711957_0_536_0_75.jpg");
         addBook($library, 'fantasy', 'La Ruota del Tempo', "https://www.lafeltrinelli.it/images/9788834739525_0_536_0_75.jpg");
         addBook($library, 'fantasy', 'Il Nome del Vento', "https://m.media-amazon.com/images/I/91SKJUew85L._UF1000,1000_QL80_.jpg");
-        addBook($library, 'fantasy', "La Bussola d\'Oro", "https://m.media-amazon.com/images/I/71FRPjGCKzL._AC_UF1000,1000_QL80_.jpg");
+        addBook($library, 'fantasy', "La Bussola d'Oro", "https://m.media-amazon.com/images/I/71FRPjGCKzL._AC_UF1000,1000_QL80_.jpg");
         
         addBook($library, 'science_fiction', 'Dune', "https://www.lafeltrinelli.it/images/9788834739679_0_536_0_75.jpg");
         addBook($library, 'science_fiction', 'Blade Runner', "https://m.media-amazon.com/images/I/81YMbFJ6wpL.jpg");
@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         addBook($library, 'horror', 'Dracula', "https://m.media-amazon.com/images/I/61uwJXxPwuL._AC_UF1000,1000_QL80_.jpg");
         addBook($library, 'horror', 'Frankenstein', "https://m.media-amazon.com/images/I/61oPJXXqXGL._AC_UF1000,1000_QL80_.jpg");
         addBook($library, 'horror', 'Il Ritratto di Dorian Gray', "https://m.media-amazon.com/images/I/71c5s0ykyIL._AC_UF1000,1000_QL80_.jpg");
-        addBook($library, 'horror', "L\'Incubo di Hill House", "https://www.adelphi.it/spool/i__id6551_mw600__1x.jpg");
+        addBook($library, 'horror', "L Incubo di Hill House", "https://www.adelphi.it/spool/i__id6551_mw600__1x.jpg");
         addBook($library, 'horror', 'Il Castello di Otranto', "https://www.ibs.it/images/9788807902161_0_536_0_75.jpg");
         addBook($library, 'horror', 'Jane Eyre', "https://www.ibs.it/images/9788807900778_0_536_0_75.jpg");
         addBook($library, 'horror', 'Il Fantasma di Canterville', "https://www.ibs.it/images/9788807900570_0_536_0_75.jpg");
@@ -223,6 +223,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
         <div class="main">
             <h1>Gestione Libreria</h1>
+            <a href="cart.php">
+              <img 
+                  src="./images/cart.png" 
+                  alt="Carrello" 
+                  class="cart-icon"
+              >
+            </a>
+            <!-- Sistemare href foto carello -->
             <p>Ciao <?php echo $_SESSION["username"]; ?>, seleziona una categoria di libri!</p>
             <?php if (isset($_SESSION['selected_genres'])): ?>
                 <div class="library-container">
@@ -236,6 +244,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <input type="hidden" name="book" value="<?= $index; ?>">
                                 <input type="hidden" name="book_genre" value="<?= $selectedGenre; ?>">
                                 <button type="submit" name="select_book">Prendi</button>
+                                <hr>
+
+                                <a href="cart.php">
+                                  <img 
+                                  src="./images/cart.png"
+                                  alt="Foto aggiungi al carrello"
+                                  class="cart-image"
+                                  value="<?= $bookId; ?>"
+                                  >
+                                </a>
                             </form>
                             </div>
                         <?php endforeach; ?>
