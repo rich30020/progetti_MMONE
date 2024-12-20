@@ -125,11 +125,9 @@ h2 {
   height: 30px;
 }
 
-.logout-btn {
+.logout {
   position: fixed;
-  top: 10px;
-  right: 10px;
-  width: 30px;
+  top: 52.5px;
   height: 30px;
   background-color: #f44336; 
   color: white; 

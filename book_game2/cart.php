@@ -50,7 +50,7 @@ $result = $stmt->get_result();
                 </div>
             <?php endwhile; ?>
         </div>
-        <a href="area-privata.php">Torna alla libreria</a>
+        <a href="area-privata.php" class="backhome">Torna alla libreria</a>
     </div>
 </body>
 </html>

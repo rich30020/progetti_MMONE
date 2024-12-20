@@ -74,6 +74,7 @@ body {
   }
   
   a {
+    padding-top: 20px;
     color: #2980b9;
     text-decoration: none;
     font-family: "Georgia", serif;

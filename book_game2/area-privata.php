@@ -2,12 +2,10 @@
 // Avvia la sessione
 session_start();
 
-
 if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
   header("location: login.html");
   exit;
 }
-
 
 $servername = "localhost";
 $username = "root";
@@ -16,11 +14,16 @@ $dbname = "book";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
 
-
 if ($conn->connect_error) {
   die("Connessione fallita: " . $conn->connect_error);
 }
 
+// Assicurati che la variabile `user_id` sia settata correttamente
+if (isset($_SESSION['user_id'])) {
+  $userId = $_SESSION['user_id'];
+} else {
+  die("Errore: ID utente non trovato. Assicurati di essere loggato.");
+}
 
 $library = [
   'historical_novel' => [],
@@ -30,7 +33,7 @@ $library = [
   'horror' => [],
 ];
 
-// Carica i libri dal database e popolala la struttura della libreria
+// Carica i libri dal database all'array library
 $sql = "SELECT * FROM books";
 $result = $conn->query($sql);
 
@@ -76,24 +79,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $stmt->close();
 
       echo "<p>Il libro è stato aggiunto al carrello!</p>";
-      }
+    }
   }
 
   if (isset($_POST['reset'])) {
     unset($_SESSION['selected_genres']);
     header("Location: area-privata.php");
     exit;
+  }
 }
-
-
-    // Avvia una nuova sessione e reimposta l'ID utente
-    session_start();
-    $_SESSION['loggato'] = true;
-    $_SESSION['user_id'] = $userId;
-
-    // Ricarica la pagina per ripristinare la libreria
-    header("Location: area-privata.php");
-    exit;
 
 // Chiudi la connessione al database
 $conn->close();
@@ -129,8 +123,6 @@ $conn->close();
           <button type="submit" name="reset" class="reset-btn">Ricomponi Libreria</button>
         </form>
 
-
-        <!-- Se i libri di una specifica libreria terminano-->
       <?php else: ?>
         <!-- Mostra i pulsanti per selezionare i generi disponibili -->
         <?php if (count($library['historical_novel']) > 0): ?>
@@ -178,7 +170,7 @@ $conn->close();
           class="cart-icon">
       </a>
       <form action="login.html" method="post">
-        <button type="submit" class="logout-btn">Esci</button>
+        <button class='logout'>Esci</button>
       </form>
 
       <p>Ciao <?php echo $_SESSION["username"]; ?>, seleziona una categoria di libri!</p>
@@ -194,7 +186,7 @@ $conn->close();
                   <input type="hidden" name="book" value="<?= $book['NAME']; ?>">
                   <input type="hidden" name="book_genre" value="<?= $selectedGenre; ?>">
                   <button type="submit" name="select_book">Prendi</button>
-                </form>               
+                </form>
               </div>
             <?php endforeach; ?>
           <?php endforeach; ?>
@@ -203,4 +195,5 @@ $conn->close();
     </div>
   </div>
 </body>
+
 </html>
