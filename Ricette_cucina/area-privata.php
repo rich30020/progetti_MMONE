@@ -1,9 +1,9 @@
 <?php
 
-session_start();
+session_start(); // Avvia la sessione
 
 if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
-  header("location: login.html");
+  header("location: login.html"); // Reindirizza se non loggato
   exit;
 }
 
@@ -12,11 +12,11 @@ $username = "root";
 $password = "";
 $dbname_kitchen = "kitchen";
 
-// Connect to the kitchen database
+// Connessione al database
 $conn_kitchen = new mysqli($servername, $username, $password, $dbname_kitchen);
 
 if ($conn_kitchen->connect_error) {
-  die("Connessione fallita: " . $conn_kitchen->connect_error);
+  die("Connessione fallita: " . $conn_kitchen->connect_error); // Mostra errore connessione
 }
 
 if (isset($_SESSION['user_id'])) {
@@ -25,7 +25,7 @@ if (isset($_SESSION['user_id'])) {
   die("Errore: ID utente non trovato. Assicurati di essere loggato.");
 }
 
-// Carica le ricette dal database all'array library
+// Carica le ricette dal database all'array $library
 $library = [];
 
 $sql = "SELECT * FROM ricette";
@@ -65,7 +65,7 @@ if (isset($_POST['reset'])) {
   exit;
 }
 
-// Fetch images from the ricette table for the carousel
+// Carica le immagini delle ricette per il carousel
 $sql = "SELECT image_url FROM ricette";
 $result = $conn_kitchen->query($sql);
 
@@ -76,7 +76,7 @@ if ($result->num_rows > 0) {
   }
 }
 
-$conn_kitchen->close();
+$conn_kitchen->close(); // Chiude la connessione al database
 ?>
 
 
@@ -341,8 +341,8 @@ $conn_kitchen->close();
 
     .card-img-top {
       width: 100%;
-      height: 200px; /* Altezza fissa per le immagini */
-      object-fit: cover; /* Adatta l'immagine mantenendo le proporzioni */
+      height: 200px;
+      object-fit: cover;
     }
 
     .text-bold {
@@ -354,35 +354,7 @@ $conn_kitchen->close();
 <body>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#"><i class="fas fa-home"></i>Rich ettario</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-      <ul class="navbar-nav">
-        <li class="nav-item active">
-          <a class="nav-link" href="#"><i class="fas fa-home"></i> Home <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#"><i class="fas fa-cogs"></i> Ricette</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="./login.html"><i class="fas fa-quit-sign"></i> Esci</a>
-        </li>
-      </ul>
-      <div class="collapse navbar-collapse" id="navbarNavDropdown">
-        <ul class="navbar-nav">
-        </ul>
-        <form class="form-inline ml-auto">
-          <input class="form-control mr-sm-2" type="search" placeholder="Cerca" aria-label="Search">
-          <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Cerca</button>
-        </form>
-      </div>
-
-    </div>
-  </nav>
-
+  <?php include 'navbar.php'?>
 
   <!-- Carousel -->
   <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
@@ -441,35 +413,29 @@ $conn_kitchen->close();
   </div>
 
   <!-- Bottone per aggiornare le card -->
-   <div class="text-center my-4">
+  <div class="text-center my-4">
     <button class="btn btn-warning" onclick="window.location.reload();">Nuove Ricette</button>
-   </div>
-
-
-
-  <ul class="margin-top: 10px"></ul>    
-  <footer class="text-center text-white" style="background-color: #f7b731;">
-  <!-- Grid container -->
-  <div class="container p-2">
-    <!-- Section: Iframe -->
-    <section class="">
-      <div class="row d-flex justify-content-center">
-        <div class="col-12">
-          <div class="ratio ratio-16x9">
-          <p><iframe
-            width="630" 
-            height="350" 
-            src="https://www.youtube.com/embed/_u_l3NeJBRU" 
-            title="" 
-            frameBorder="0"   
-            ></iframe></p>
-          </div>
-        </div>
-      </div>
-    </section>
   </div>
 
-</footer>   
+  <footer class="text-center text-white" style="background-color: #f7b731;">
+    <div class="container p-2">
+      <section>
+        <div class="row d-flex justify-content-center">
+          <div class="col-12">
+            <div class="ratio ratio-16x9">
+              <p><iframe
+                width="630" 
+                height="350" 
+                src="https://www.youtube.com/embed/_u_l3NeJBRU" 
+                title="" 
+                frameBorder="0"   
+              ></iframe></p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </footer>   
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
@@ -478,3 +444,4 @@ $conn_kitchen->close();
 </body>
 
 </html>
+
