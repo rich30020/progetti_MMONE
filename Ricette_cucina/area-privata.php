@@ -45,6 +45,18 @@ if ($result->num_rows > 0) {
   }
 }
 
+// Inizializza l'array $randomRecipes
+$randomRecipes = [];
+
+// Seleziona 3 ricette casuali se ci sono abbastanza ricette, altrimenti usa tutte le ricette disponibili
+if (count($library) > 3) {
+  $randomKeys = array_rand($library, 3);
+  foreach ($randomKeys as $key) {
+    $randomRecipes[] = $library[$key];
+  }
+} else {
+  $randomRecipes = $library;
+}
 
 if (isset($_POST['reset'])) {
   // Resetta le categorie selezionate e ricarica la pagina
@@ -67,6 +79,7 @@ if ($result->num_rows > 0) {
 $conn_kitchen->close();
 ?>
 
+
 <!DOCTYPE html>
 <html lang="it">
 
@@ -74,7 +87,7 @@ $conn_kitchen->close();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="main.css" class="css">
-  <link rel="icon" type="image/x-icon" href="images/book.png">
+  <link rel="icon" type="image/x-icon" href="./images/kitchen.png">
   <title>Gestione Ricette</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
   <style>
@@ -91,7 +104,7 @@ $conn_kitchen->close();
     .container {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: 30vh;
     }
 
     /* Navbar */
@@ -325,6 +338,16 @@ $conn_kitchen->close();
       top: 0;
       z-index: 1000;
     }
+
+    .card-img-top {
+      width: 100%;
+      height: 200px; /* Altezza fissa per le immagini */
+      object-fit: cover; /* Adatta l'immagine mantenendo le proporzioni */
+    }
+
+    .text-bold {
+      font-weight: bold;
+    }
   </style>
 </head>
 
@@ -394,8 +417,8 @@ $conn_kitchen->close();
           <form method="get" action="ricetta.php">
             <img src="<?= $ricetta['image_url'] ?>" alt="<?= $ricetta['nome'] ?>" class="book-image">
             <span class="book-title"><?= $ricetta['nome']; ?></span>
-            <span class="book-time">Tempo di preparazione: <?= $ricetta['tempo_di_preparazione']; ?></span>
-            <span class="book-difficulty">Grado di difficoltà: <?= $ricetta['grado_di_difficolta']; ?></span>
+            <span class="book-time"><span class="text-bold">Tempo di preparazione:</span> <?= $ricetta['tempo_di_preparazione']; ?> minuti</span>
+            <span class="book-difficulty"><span class="text-bold">Grado di difficoltà:</span> <?= $ricetta['grado_di_difficolta']; ?></span>
             <input type="hidden" name="book_id" value="<?= $ricetta['id']; ?>">
             <button type="submit" name="select_book" class="btn btn-info-ricetta">Info Ricetta</button>
           </form>
@@ -403,14 +426,55 @@ $conn_kitchen->close();
       <?php endforeach; ?>
     </div>
   </div>
+  
+  <div class="card-deck">
+    <?php foreach ($randomRecipes as $ricetta): ?>
+      <div class="card">
+        <img class="card-img-top" src="<?= $ricetta['image_url'] ?>" alt="Card image cap">
+        <div class="card-body">
+          <h5 class="card-title"><?= $ricetta['nome'] ?></h5>
+          <p class="card-text"><?= $ricetta['descrizione'] ?></p>
+          <p class="card-text"><small class="text-muted">Tempo di preparazione: <?= $ricetta['tempo_di_preparazione'] ?> minuti</small></p>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <!-- Bottone per aggiornare le card -->
+   <div class="text-center my-4">
+    <button class="btn btn-warning" onclick="window.location.reload();">Nuove Ricette</button>
+   </div>
 
 
 
+  <ul class="margin-top: 10px"></ul>    
+  <footer class="text-center text-white" style="background-color: #f7b731;">
+  <!-- Grid container -->
+  <div class="container p-2">
+    <!-- Section: Iframe -->
+    <section class="">
+      <div class="row d-flex justify-content-center">
+        <div class="col-12">
+          <div class="ratio ratio-16x9">
+          <p><iframe
+            width="630" 
+            height="350" 
+            src="https://www.youtube.com/embed/_u_l3NeJBRU" 
+            title="" 
+            frameBorder="0"   
+            ></iframe></p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+</footer>   
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-</body>
+
 </body>
 
 </html>
