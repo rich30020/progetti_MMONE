@@ -264,7 +264,7 @@ $conn_kitchen->close(); // Chiude la connessione al database
 
     .carousel img {
       width: 100%;
-      height: auto;
+      height: 710px;
       object-fit: cover;
       transition: transform 0.3s ease;
     }
@@ -381,8 +381,8 @@ $conn_kitchen->close(); // Chiude la connessione al database
   </div>
 
   <div class="main">
-    <h1>Gestione Ricette</h1>
-    <p>Ciao <?php echo $_SESSION["username"]; ?>, seleziona una categoria di ricette!</p>
+    <h1>Le Nostre Ricette</h1>
+    <p>Ciao <?php echo $_SESSION["username"]; ?>, seleziona una Ricetta!</p>
     <div class="library-container">
       <?php foreach ($library as $ricetta): ?>
         <div class="book">
