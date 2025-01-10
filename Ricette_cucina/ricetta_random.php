@@ -24,10 +24,10 @@ $result = $conn_kitchen->query($sql);
 if ($result->num_rows > 0) {
   $row = $result->fetch_assoc();
   $randomRecipeId = $row['id'];
-  header("Location: ricetta.php?book_id=" . $randomRecipeId); // Reindirizza alla pagina della ricetta casuale
+  header("Location: ricetta.php?book_id=" . $randomRecipeId); // Va alla pagina della ricetta casuale
   exit;
 } else {
-  die("Errore: Nessuna ricetta trovata."); // Mostra errore se non ci sono ricette
+  die("Errore: Nessuna ricetta trovata."); // Mostra errore se non ci sono ricette disponibili
 }
 
 $conn_kitchen->close(); // Chiude la connessione al database

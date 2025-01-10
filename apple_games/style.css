@@ -10,7 +10,7 @@
     --button-width: 0.333em;
     --notch-height: 3.33em;
     --notch-width: 33.3%;
-    --notch-radius: calc(var(var(--border-radius)- calc(var--pad) * 2));
+    --notch-radius: calc(var(--border-radius) - calc(var(--pad) * 2));
     --notch-duration: 0.333s;
     --ease: cubic-bezier(.666, 0, .4, 1);
     --ease-spring: cubic-bezier(.666, 0, .4, 1.2);
@@ -78,7 +78,7 @@ body {
     border-right-width: 0;
 }
 
-buttons{
+.buttons{
     position: absolute;
     inset: calc(var(--border-width) * -1);
     pointer-events: none;
@@ -86,7 +86,7 @@ buttons{
 
 .buttons .left, .buttons .right {
     position: absolute;
-    width: var(--border-width);
+    width: var(--button-width);
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -561,4 +561,87 @@ input[type=radio]{
     --g-hue-adjust: 190;
     --g-hue-adjust-2: 145;
     --g-lightness: 95%;
+}
+
+.silver{
+    --c-h: var(--silver);
+    --c-s: 10%;
+    --g-hue-adjust: 30;
+    --g-lightness: 95%;
+}
+
+.silver .glow {
+    opacity: 0.25;
+}
+
+#deep-purple:checked~.phone .bg .deep-purple{
+    opacity: 1;
+    z-index: 1;
+    transition-delay: 0s;
+}
+
+#deep-purple:checked~.phone .bg .deep-purple .section::before{
+    transition-delay: 0s;
+    animation: test 1s infinite alternate-reverse;
+}
+
+#deep-purple:checked~.pallette label[for=deep-purple]{
+    border-color: hsl(var(--deep-purple), 50% 75%);
+}
+
+#gold:checked~.phone .bg .gold {
+    opacity: 1;
+    z-index: 1;
+    transition-delay: 0s;
+}
+
+#gold:checked~.phone .bg .gold .section::before{
+    transition-delay: 0s;
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+    animation: test 1s infinite alternate-reverse;
+}
+
+#gold:checked~.pallette label[for=gold]{
+    border-color: hsl(var(--gold), 50%, 75%);
+}
+
+#space-black:checked~.phone .bg .space-black{
+    opacity: 1;
+    z-index: 1;
+    transition-delay: 0s;
+}
+
+#space-black:checked~.phone .bg .space-black .section::before {
+    transition-delay: 0s;
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+    animation: test 1s infinite alternate-reverse;
+}
+
+#space-black:checked~.pallette label[for=space-black]{
+    border-color: hsl(var(--space-black), 50%, 75%);
+}
+
+#silver:checked~.phone .bg .silver{
+    opacity: 1;
+    z-index: 1;
+    transition-delay: 0s;
+}
+
+#silver:checked~.phone .bg .silver .section::before {
+    transition-delay: 0s;
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+    animation: test 1s infinite alternate-reverse;
+}
+
+#silver:checked~.pallette label[for=silver]{
+    border-color: hsl(var(--silver), 50%, 75%);
+}
+
+@keyframes test {
+    from {
+        transform: scale3d(1, 1, 1) translate3d(0,0 ,0);
+    }
+    to {
+        transform: scale3d(2, 2, 2) translate3d(50px ,50px ,50px);
+    }
 }
