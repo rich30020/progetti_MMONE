@@ -27,7 +27,6 @@ $conn = new mysqli($servername, $username, $password, $dbname);
 if ($conn->connect_error) {
     die("Connessione fallita: " . $conn->connect_error);
 }
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $utente_id = $_SESSION['user_id'];
     $tavolo_id = $_POST['tavolo_id'];
@@ -44,14 +43,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
 
     if ($numero_persone <= $posti) {
-        $sql = "INSERT INTO prenotazioni (utente_id, tavolo_id, data_ora, numero_persone, status) VALUES (?, ?, ?, ?, 'confermata')";
+        // Verifica se il tavolo è già prenotato per la stessa data e ora (da qualcun altro o dallo stesso utente)
+        $sql = "SELECT COUNT(*) FROM prenotazioni WHERE tavolo_id = ? AND data_ora = ? AND id != ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iisi", $utente_id, $tavolo_id, $data_ora, $numero_persone);
+        $stmt->bind_param("isi", $tavolo_id, $data_ora, $prenotazione_id);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
 
-        if ($stmt->execute()) {
-            echo "Prenotazione avvenuta con successo. <a href='area-privata.php'>Torna alle tue prenotazioni</a>";
+        if ($count > 0) {
+            echo "Errore: il tavolo è già prenotato per questa data e ora.";
         } else {
-            echo "Errore nella prenotazione: " . $stmt->error;
+            // Inserisci la nuova prenotazione
+            $sql = "INSERT INTO prenotazioni (utente_id, tavolo_id, data_ora, numero_persone, status) VALUES (?, ?, ?, ?, 'confermata')";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("iisi", $utente_id, $tavolo_id, $data_ora, $numero_persone);
+
+            if ($stmt->execute()) {
+                echo "Prenotazione avvenuta con successo. <a href='area-privata.php'>Torna alle tue prenotazioni</a>";
+            } else {
+                echo "Errore nella prenotazione: " . $stmt->error;
+            }
         }
     } else {
         echo "Errore: il numero di persone supera i posti disponibili per il tavolo selezionato.";
@@ -60,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->close();
     $conn->close();
 }
+
 ?>
 </body>
 </html>

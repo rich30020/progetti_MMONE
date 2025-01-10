@@ -1,8 +1,8 @@
 <?php
-session_start(); // Avvia la sessione
+session_start(); 
 
 if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
-    header("location: login.html"); // Reindirizza se non loggato
+    header("location: login.html"); 
     exit;
 }
 
@@ -11,7 +11,6 @@ $username = "root";
 $password = "";
 $dbname_kitchen = "ristorante";
 
-// Connessione al database
 $conn_kitchen = new mysqli($servername, $username, $password, $dbname_kitchen);
 
 if ($conn_kitchen->connect_error) {
@@ -24,12 +23,7 @@ if (isset($_SESSION['user_id'])) {
     die("Errore: ID utente non trovato. Assicurati di essere loggato.");
 }
 
-// Carica le prenotazioni dell'utente dal database all'array $reservations
-$reservations = [];
-$tavoli = [];
-$tabella_stato = [];
-
-// Carica tutte le prenotazioni future
+// Carica le prenotazioni future
 $sql = "SELECT tavolo_id, data_ora FROM prenotazioni WHERE data_ora > NOW()";
 $result = $conn_kitchen->query($sql);
 
@@ -46,25 +40,18 @@ if ($result->num_rows > 0) {
 // Carica tutti i tavoli e le loro capacità
 $sql = "SELECT id, numero_tavolo, posti FROM tavoli";
 $result = $conn_kitchen->query($sql);
+$tavoli = [];
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $tavoli[$row['id']] = [
             'numero_tavolo' => $row['numero_tavolo'],
             'posti' => $row['posti']
         ];
-        $tabella_stato[$row['id']] = 'disponibile'; // Segna inizialmente tutti i tavoli come disponibili
-    }
-}
-
-// Aggiorna lo stato dei tavoli basato sulle prenotazioni future
-foreach ($prenotazioni_future as $prenotazione) {
-    $tavolo_id = $prenotazione['tavolo_id'];
-    if (isset($tabella_stato[$tavolo_id])) {
-        $tabella_stato[$tavolo_id] = 'occupato'; // Segna i tavoli come occupati se prenotati
     }
 }
 
 // Carica le prenotazioni dell'utente
+$reservations = [];
 $sql = "SELECT prenotazioni.id, tavoli.numero_tavolo, tavoli.posti, prenotazioni.data_ora, prenotazioni.numero_persone, prenotazioni.status 
         FROM prenotazioni 
         JOIN tavoli ON prenotazioni.tavolo_id = tavoli.id 
@@ -100,20 +87,6 @@ $conn_kitchen->close(); // Chiude la connessione al database
     <title>Gestione Prenotazioni</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="main.css">
-    <style>
-        .table-available {
-            background-color: green;
-            color: white;
-            padding: 10px;
-            margin: 5px;
-        }
-        .table-occupied {
-            background-color: red;
-            color: white;
-            padding: 10px;
-            margin: 5px;
-        }
-    </style>
 </head>
 <body>
 
@@ -122,15 +95,29 @@ $conn_kitchen->close(); // Chiude la connessione al database
 <div class="container">
     <h2 class="text-center mt-5" style="color: black;">Mappa dei Tavoli</h2>
     <div class="table-map">
-        <?php foreach ($tabella_stato as $id => $status): ?>
-            <div class="<?= $status === 'disponibile' ? 'table-available' : 'table-occupied'; ?>">
-                Tavolo <?= $tavoli[$id]['numero_tavolo']; ?>
-                <br> 
-                (<?= $tavoli[$id]['posti']; ?> posti)
-            </div>
-        <?php endforeach; ?>
+    <?php 
+    // Ciclo sui tavoli per mostrarli
+    foreach ($tavoli as $id => $tavolo): 
+        // Controlla se il tavolo è prenotato
+        $isBooked = false;
+        foreach ($prenotazioni_future as $prenotazione) {
+            if ($prenotazione['tavolo_id'] == $id) {
+                $isBooked = true;
+                break;
+            }
+        }
+
+        if ($isBooked) {
+            continue; // Salta questo tavolo se è prenotato
+        }
+    ?>
+        <div class="table-available">
+            Tavolo <?= $tavolo['numero_tavolo']; ?>
+            <br> 
+            (<?= $tavolo['posti']; ?> posti)
+        </div>
+    <?php endforeach; ?>
     </div>
-    <!-- Resto del tuo codice HTML -->
 </div>
 
 <h2 class="text-center mt-5">Prenota un Tavolo</h2>
