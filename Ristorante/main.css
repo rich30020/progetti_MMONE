@@ -1,0 +1,139 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f3f3f3;
+    color: #333;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.card {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.btn {
+    border-radius: 20px;
+}
+
+.navbar {
+    background-color: #343a40;
+}
+
+.navbar-brand, .nav-link {
+    color: #fff !important;
+}
+
+.navbar-brand:hover, .nav-link:hover {
+    color: #ff9800 !important;
+}
+
+.table-map {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.table-map div {
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    font-size: 0.9em;
+    color: #000; 
+}
+
+.table-available {
+    background-color: #28a745; 
+    color: #fff;
+}
+
+.table-occupied {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+form .form-group label {
+    font-weight: bold;
+}
+
+form .form-control {
+    border-radius: 10px;
+    border: 1px solid #dee2e6;
+}
+
+form button[type="submit"] {
+    width: 100%;
+    font-weight: bold;
+}
+
+.text-center {
+    color: black;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.card-text {
+    color: #343a40;
+}
+
+h2 {
+    font-weight: bold;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border: none;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border: none;
+}
+
+.bg-light {
+    background-color: #f8f9fa !important;
+}
+
+.rounded {
+    border-radius: 10px !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+.table-available {
+    background-color: #28a745; /* verde */
+    color: #fff;
+}
+
+.table-occupied {
+    background-color: #dc3545; /* rosso */
+    color: #fff;
+}
