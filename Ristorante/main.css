@@ -24,6 +24,7 @@ body {
     border-radius: 15px;
     overflow: hidden;
     background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    margin-bottom: 30px;
 }
 
 .card:hover {
@@ -42,12 +43,15 @@ body {
 .card-text {
     color: #495057;
     font-size: 1.1rem;
+    margin-bottom: 15px;
 }
 
 .btn {
     border-radius: 25px;
     font-weight: 600;
     transition: background-color 0.3s ease, transform 0.3s ease;
+    margin: 10px 5px;
+    display: inline-block;
 }
 
 .btn:hover {
@@ -93,15 +97,6 @@ body {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
 }
 
-.table-available {
-    background-color: #28a745;
-    color: #fff;
-}
-
-.table-occupied {
-    background-color: #dc3545;
-    color: #fff;
-}
 
 .table-map div:hover {
     background-color: #e9ecef;
@@ -116,11 +111,16 @@ form {
     max-width: 600px;
     margin: 0 auto;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 30px;
 }
 
 form:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.2);
+}
+
+form .form-group {
+    margin-bottom: 15px;
 }
 
 form .form-group label {
@@ -135,25 +135,27 @@ form .form-control {
     font-size: 1.1rem;
     box-sizing: border-box;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    height: 50px;
 }
 
 form .form-control:focus {
     border-color: #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 0 5px rgb(247, 183, 49);
 }
 
 form button[type="submit"] {
-    background-color: #007bff;
+    background-color: #f7b731;
     color: #fff;
     padding: 14px;
     font-weight: 600;
     width: 100%;
     border-radius: 25px;
     border: none;
+    margin-top: 30px;
 }
 
 form button[type="submit"]:hover {
-    background-color: #0056b3;
+    background-color: #f7b731;
     transform: scale(1.05);
 }
 

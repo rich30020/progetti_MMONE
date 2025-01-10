@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Inter", sans-serif;
+}
+
+a {
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+}
+
+img {
+    object-fit: cover;
+}
+
+h2 { 
+    font-weight: 400;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 32px;
+    border: 1px solid #e8e8e8;
+    position: absolute;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 16px;
+    padding: 12px;
+}
+
+nav .logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+nav .logo img {
+    width: 30px;
+    height: 30px;
+}
+
+nav .logo a {
+    color: #000;
+    font-weight: 600;
+}
+
+nav .nav-links  {
+    display: flex;
+    gap: 24px;
+}
+
+nav .nav-links a {
+    font-size: 14px;
+    color: #606060;
+    transition: all 0.3s ease;
+}
+
+nav .nav-links a:hover {
+    color: #000;
+}
+
+nav button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    font-size: 14px;
+    height: 32px;
+    width: 122px;
+    background: #000;
+    color: #fff;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+nav button:hover 
+.hero .left-section .top .buttons 
+button.doc:hover {
+    color: #000;
+    background: #fff;
+    border-color: #dedede;
+}
+
+nav button i {
+    font-size: 20px;
+
+}
+
+.hero {
+    margin-top: 80px;
+    height: calc(100vh - 80px);
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.hero > img {
+    max-width: 520px;
+    width: 44%;
+    border-radius: 26px;
+}
+
+.hero .left-section {
+    display: flex;
+    flex-direction: column;
+    gap: 100px;
+}
+
+.hero .left-section .top h2 {
+    font-size: 44px;
+    margin-bottom: 24px;
+}
+
+.hero .left-section .top p {
+    color: #606060;
+    font-size: 18px;
+    margin-bottom: 24px;
+    text-align: justify;
+}
+
+.hero .left-section .top .buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.hero .left-section .top .buttons 
+button {
+    font-size: 16px;
+    border: none;
+    padding: 5px 20px;
+    background: #fff;
+    border: 1px solid #dedede;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.hero .left-section .top .buttons 
+button i {
+    font-size: 26px;
+}
+
+.hero .left-section .top .buttons 
+button.doc {
+    background: #000;
+    color: #fff;
+}
+
+.hero .left-section .top .buttons 
+button.git:hover {
+    background: #000;
+    color: #fff;
+    border-color: transparent;
+}
+
+.hero .left-section .bottom p {
+    font-size: 14px;
+    color: #606060;
+    margin-bottom: 10px;
+}
+
+.hero .left-section .bottom .icons {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    width: fit-content;
+} 
+
+.about {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: #f5f5f5;
+    padding: 50px;
+}
+
+.about > p{
+    font-size: 14px;
+    color: #606060;
+    border: 1px solid #e8e8e8;
+    padding: 6px 14px;
+    border-radius: 16px;
+    margin-bottom: 12px;
+    background: #fff;
+}
+
+.about > h2{
+    font-size: 22px;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.about .items {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.about .items .item {
+    width: 26%;
+    border: 1px solid #e8e8e8;
+    border-radius: 16px;
+    background: #f1f1f1;
+    padding: 0 0 30px;
+}
+
+.about .items .item .inner{
+    background: #fff;
+    padding: 24px;
+    border-radius: 16px;
+    border: 1px solid #e8e8e8;
+    min-height: 365px;
+}
+
+.about .items .item .inner img {
+    width: 100%;
+    margin-bottom: 16px;
+    border-radius: 12px;
+}
+
+.about .items .item .inner a{
+    font-size: 18px;
+    color: #000;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.about .items .item .inner p{
+    color: #606060;
+    font-size: 15px;
+}

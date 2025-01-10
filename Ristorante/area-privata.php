@@ -1,22 +1,27 @@
 <?php
-session_start(); 
+session_start();
 
+// Verifica se l'utente è loggato
 if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
-    header("location: login.html"); 
+    header("location: login.html");
     exit;
 }
 
+// Impostazioni di connessione al database
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname_kitchen = "ristorante";
 
+// Connessione al database
 $conn_kitchen = new mysqli($servername, $username, $password, $dbname_kitchen);
 
+// Verifica se la connessione è riuscita
 if ($conn_kitchen->connect_error) {
-    die("Connessione fallita: " . $conn_kitchen->connect_error); // Mostra errore connessione
+    die("Connessione fallita: " . $conn_kitchen->connect_error);
 }
 
+// Recupera l'ID utente dalla sessione
 if (isset($_SESSION['user_id'])) {
     $userId = $_SESSION['user_id'];
 } else {
@@ -74,8 +79,9 @@ if ($result->num_rows > 0) {
     }
 }
 
+// Chiudi la connessione al database
 $stmt->close();
-$conn_kitchen->close(); // Chiude la connessione al database
+$conn_kitchen->close();
 ?>
 
 <!DOCTYPE html>
@@ -112,9 +118,9 @@ $conn_kitchen->close(); // Chiude la connessione al database
         }
     ?>
         <div class="table-available">
-            Tavolo <?= $tavolo['numero_tavolo']; ?>
+            Tavolo <?= htmlspecialchars($tavolo['numero_tavolo']); ?>
             <br> 
-            (<?= $tavolo['posti']; ?> posti)
+            (<?= htmlspecialchars($tavolo['posti']); ?> posti)
         </div>
     <?php endforeach; ?>
     </div>
@@ -138,23 +144,23 @@ $conn_kitchen->close(); // Chiude la connessione al database
 </form>
 
 <h2 class="text-center mt-5">Le Tue Prenotazioni</h2>
-<p class="text-center">Ciao <?php echo $_SESSION["nome"]; ?>, ecco le tue prenotazioni:</p>
+<p class="text-center">Ciao <?php echo htmlspecialchars($_SESSION["nome"]); ?>, ecco le tue prenotazioni:</p>
 <div class="row">
     <?php foreach ($reservations as $prenotazione): ?>
         <div class="col-md-4">
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Tavolo n. <?= $prenotazione['numero_tavolo']; ?></h5>
+                    <h5 class="card-title">Tavolo n. <?= htmlspecialchars($prenotazione['numero_tavolo']); ?></h5>
                     <p class="card-text">
-                        <strong>Data e Ora:</strong> <?= $prenotazione['data_ora']; ?><br>
-                        <strong>Numero di Persone:</strong> <?= $prenotazione['numero_persone']; ?><br>
-                        <strong>Status:</strong> <?= ucfirst($prenotazione['status']); ?>
+                        <strong>Data e Ora:</strong> <?= htmlspecialchars($prenotazione['data_ora']); ?><br>
+                        <strong>Numero di Persone:</strong> <?= htmlspecialchars($prenotazione['numero_persone']); ?><br>
+                        <strong>Status:</strong> <?= htmlspecialchars(ucfirst($prenotazione['status'])); ?>
                     </p>
                     <form method="post" action="modifica_prenotazione.php">
-                        <input type="hidden" name="prenotazione_id" value="<?= $prenotazione['id']; ?>">
-                        <input type="hidden" name="numero_tavolo" value="<?= $prenotazione['numero_tavolo']; ?>">
-                        <input type="hidden" name="data_ora" value="<?= $prenotazione['data_ora']; ?>">
-                        <input type="hidden" name="numero_persone" value="<?= $prenotazione['numero_persone']; ?>">
+                        <input type="hidden" name="prenotazione_id" value="<?= htmlspecialchars($prenotazione['id']); ?>">
+                        <input type="hidden" name="numero_tavolo" value="<?= htmlspecialchars($prenotazione['numero_tavolo']); ?>">
+                        <input type="hidden" name="data_ora" value="<?= htmlspecialchars($prenotazione['data_ora']); ?>">
+                        <input type="hidden" name="numero_persone" value="<?= htmlspecialchars($prenotazione['numero_persone']); ?>">
                         <button type="submit" name="modifica" class="btn btn-primary">Modifica</button>
                         <button type="submit" name="annulla" class="btn btn-danger">Annulla</button>
                     </form>
