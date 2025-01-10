@@ -63,7 +63,7 @@ body {
     transform: scale3d(1.1, 1.1, 1);
     -webkit-animation: appear 1s var(--ease-out) forwards;
     animation: appear 1s var(--ease-out) forwards;
-    -webkit-backface-visibility: hidden;
+    /* -webkit-backface-visibility: hidden;*/
 }
 
 .phone::before{

@@ -83,7 +83,7 @@ $conn_kitchen->close(); // Chiude la connessione al database
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="./images/kitchen.png">
+    <link rel="icon" type="image/x-icon" href="./images/restaurant.png">
     <title>Gestione Prenotazioni</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="main.css">
