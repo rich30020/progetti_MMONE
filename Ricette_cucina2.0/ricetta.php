@@ -26,15 +26,22 @@ if (isset($_GET['book_id'])) {
   }
   $stmt->close();
 } else {
-  die("Errore: ID ricetta non fornito."); // Mostra errore se l'ID non è fornito
+  // Carica una ricetta casuale se l'ID non è fornito
+  $sql = "SELECT * FROM ricette ORDER BY RAND() LIMIT 1";
+  $result = $conn_kitchen->query($sql);
+
+  if ($result->num_rows > 0) {
+    $ricetta = $result->fetch_assoc();
+  } else {
+    die("Nessuna ricetta trovata.");
+  }
 }
 
-$conn_kitchen->close(); // Chiude la connessione al database
+$conn_kitchen->close();
 ?>
 
 <!DOCTYPE html>
 <html lang="it">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -48,27 +55,23 @@ $conn_kitchen->close(); // Chiude la connessione al database
       line-height: 1.6;
       background-color: #f9f9f9;
     }
-
     h1 {
       color: #333;
       font-weight: bold;
       text-align: center;
       margin-top: 20px;
     }
-
     h3 {
       color: #555;
       font-weight: bold;
       margin-top: 20px;
     }
-
     p {
       margin: 15px 0;
       text-align: justify;
       font-size: 1.1em;
       color: #666;
     }
-
     .responsive-img {
       width: 100%;
       height: auto;
@@ -78,7 +81,6 @@ $conn_kitchen->close(); // Chiude la connessione al database
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
-
     .back-button {
       display: block;
       width: 200px;
@@ -91,11 +93,9 @@ $conn_kitchen->close(); // Chiude la connessione al database
       border-radius: 5px;
       transition: background-color 0.3s ease;
     }
-
     .back-button:hover {
       background-color: #e0a300;
     }
-
     /* Carosello CSS */
     .carousel-item img {
       width: 100%;
@@ -104,7 +104,6 @@ $conn_kitchen->close(); // Chiude la connessione al database
     }
   </style>
 </head>
-
 <body>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <?php include 'navbar.php' ?>
@@ -145,7 +144,6 @@ $conn_kitchen->close(); // Chiude la connessione al database
 
   <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6
 </body>
-
 </html>

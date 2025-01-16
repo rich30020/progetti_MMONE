@@ -1,22 +1,25 @@
 <?php
 session_start();
-
-if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
-  header("location: login.html");
-  exit;
-}
-
 include 'connessione_ricette.php';
 
-if (isset($_SESSION['user_id'])) {
-  $userId = $_SESSION['user_id'];
-} else {
-  die("Errore: ID utente non trovato. Assicurati di essere loggato.");
+// Verifica se l'utente è loggato
+if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
+    header("location: login.html");
+    exit;
 }
 
-// Verifica se l'utente ha selezionato una ricetta
+if (isset($_SESSION['user_id'])) {
+    $userId = $_SESSION['user_id'];
+} else {
+    die("Errore: ID utente non trovato. Assicurati di essere loggato.");
+}
+
+// Gestione della selezione della ricetta e salvataggio nella sessione
 if (isset($_GET['select_book'])) {
   $ricettaId = $_GET['book_id'];
+
+  // Salva l'ID della ricetta nella sessione
+  $_SESSION['ricetta_selezionata'] = $ricettaId;
 
   // Aggiorna il conteggio dei clic per questa ricetta
   $updateQuery = "UPDATE ricette SET clicks = clicks + 1 WHERE id = ?";
@@ -30,38 +33,48 @@ if (isset($_GET['select_book'])) {
   exit();
 }
 
-// Carica le ricette
-$library = [];
+
+// Carica tutte le ricette
 $sql = "SELECT * FROM ricette";
 $result = $conn_kitchen->query($sql);
 
+$library = [];
 if ($result->num_rows > 0) {
-  while ($row = $result->fetch_assoc()) {
-    $library[] = [
-      'id' => $row['id'],
-      'nome' => $row['nome'],
-      'descrizione' => $row['descrizione'],
-      'ingredienti' => $row['ingredienti'],
-      'image_url' => $row['image_url'],
-      'tempo_di_preparazione' => $row['tempo_di_preparazione'],
-      'grado_di_difficolta' => $row['grado_di_difficolta']
-    ];
-  }
+    while ($row = $result->fetch_assoc()) {
+        $library[] = [
+            'id' => $row['id'],
+            'nome' => $row['nome'],
+            'descrizione' => $row['descrizione'],
+            'ingredienti' => $row['ingredienti'],
+            'image_url' => $row['image_url'],
+            'tempo_di_preparazione' => $row['tempo_di_preparazione'],
+            'grado_di_difficolta' => $row['grado_di_difficolta']
+        ];
+    }
 }
 
-// Seleziona ricette casuali da mostrare
+// Carica solo le ricette cliccate per il carousel
+$carouselSql = "SELECT * FROM ricette WHERE clicks > 0";
+$carouselResult = $conn_kitchen->query($carouselSql);
+
 $randomRecipes = [];
-if (count($library) > 3) {
-  $randomKeys = array_rand($library, 3);
-  foreach ($randomKeys as $key) {
-    $randomRecipes[] = $library[$key];
-  }
-} else {
-  $randomRecipes = $library;
+if ($carouselResult->num_rows > 0) {
+    while ($row = $carouselResult->fetch_assoc()) {
+        $randomRecipes[] = [
+            'id' => $row['id'],
+            'nome' => $row['nome'],
+            'descrizione' => $row['descrizione'],
+            'image_url' => $row['image_url'],
+            'tempo_di_preparazione' => $row['tempo_di_preparazione'],
+            'grado_di_difficolta' => $row['grado_di_difficolta']
+        ];
+    }
 }
 
 $conn_kitchen->close();
 ?>
+
+
 
 
 
@@ -80,9 +93,10 @@ $conn_kitchen->close();
     body {
       background-color: #f5f5f5;
       font-family: "Georgia", serif;
-      margin: 0;
+      margin-right: 0;
       padding: 0;
       box-sizing: border-box;
+      overflow-x: hidden;
     }
 
     .navbar-custom {
@@ -103,6 +117,7 @@ $conn_kitchen->close();
       padding: 20px;
       background: #ecf0f1;
       margin-top: 80px;
+      box-sizing: border-box;
     }
 
     .library-container {
@@ -182,6 +197,7 @@ $conn_kitchen->close();
       overflow: hidden;
       position: relative;
       width: 100%;
+      box-sizing: border-box;
     }
 
     .carousel-inner {
@@ -243,6 +259,12 @@ $conn_kitchen->close();
     .text-bold {
       font-weight: bold;
     }
+
+    .library-container,
+    .card-deck {
+    width: 100%;
+    box-sizing: border-box;
+    }
   </style>
 </head>
 
@@ -257,14 +279,14 @@ $conn_kitchen->close();
     <div class="library-container">
       <?php foreach ($library as $ricetta): ?>
         <div class="book">
-          <form method="get" action="ricetta.php">
-            <img src="<?= $ricetta['image_url'] ?>" alt="<?= $ricetta['nome'] ?>" class="book-image">
-            <span class="book-title"><?= $ricetta['nome']; ?></span>
-            <span class="book-time"><span class="text-bold">Tempo di preparazione:</span> <?= $ricetta['tempo_di_preparazione']; ?> minuti</span>
-            <span class="book-difficulty"><span class="text-bold">Grado di difficoltà:</span> <?= $ricetta['grado_di_difficolta']; ?></span>
-            <input type="hidden" name="book_id" value="<?= $ricetta['id']; ?>">
-            <button type="submit" name="select_book" class="btn btn-info-ricetta">Info Ricetta</button>
-          </form>
+        <form method="get" action="area-privata.php">
+          <img src="<?= $ricetta['image_url'] ?>" alt="<?= $ricetta['nome'] ?>" class="book-image">
+          <span class="book-title"><?= $ricetta['nome']; ?></span>
+          <span class="book-time"><span class="text-bold">Tempo di preparazione:</span> <?= $ricetta['tempo_di_preparazione']; ?> minuti</span>
+          <span class="book-difficulty"><span class="text-bold">Grado di difficoltà:</span> <?= $ricetta['grado_di_difficolta']; ?></span>
+          <input type="hidden" name="book_id" value="<?= $ricetta['id']; ?>">
+          <button type="submit" name="select_book" class="btn btn-info-ricetta">Info Ricetta</button>
+        </form>
         </div>
       <?php endforeach; ?>
     </div>
@@ -308,7 +330,7 @@ $conn_kitchen->close();
     </div>
   </footer>   
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css">
+
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"></script>
