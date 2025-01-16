@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'connessione_utenti.php'; // Include la connessione al database
+include 'connessione_ricette.php'; // Include la connessione al database
 
 // Verifica se il metodo di richiesta è POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $stmt->bind_param("sss", $email, $username, $password);
 
     if ($stmt->execute()) {
-        echo "Registrazione avvenuta con successo. <a href='login.html'>Accedi</a>";
+        echo "Registrazione avvenuta con successo.<br><a href='login.html'>Accedi</a>";
     } else {
         echo "Errore nella registrazione: " . $stmt->error;
     }

@@ -6,18 +6,9 @@ if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
   exit;
 }
 
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname_kitchen = "kitchen";
+include 'connessione_ricette.php';
 
-
-$conn_kitchen = new mysqli($servername, $username, $password, $dbname_kitchen);
-
-if ($conn_kitchen->connect_error) {
-  die("Connessione fallita: " . $conn_kitchen->connect_error); 
-}
-
+// Carica tutte le ricette
 $sql = "SELECT id FROM ricette ORDER BY RAND() LIMIT 1"; // Seleziona un ID ricetta casuale
 $result = $conn_kitchen->query($sql);
 
@@ -27,9 +18,8 @@ if ($result->num_rows > 0) {
   header("Location: ricetta.php?book_id=" . $randomRecipeId); // Va alla pagina della ricetta casuale
   exit;
 } else {
-  die("Errore: Nessuna ricetta trovata."); // Mostra errore se non ci sono ricette disponibili
+  die("Errore: Nessuna ricetta trovata."); 
 }
 
 $conn_kitchen->close(); // Chiude la connessione al database
-
 ?>

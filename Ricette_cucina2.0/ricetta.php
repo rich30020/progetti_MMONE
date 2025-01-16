@@ -10,12 +10,12 @@ include 'connessione_ricette.php'; // Include la connessione al database
 
 $ricetta = null;
 
-if (isset($_GET['book_id'])) {
-  $bookId = $_GET['book_id'];
+if (isset($_GET['recipes_id'])) {
+  $recipesId = $_GET['recipes_id'];
 
   $sql = "SELECT * FROM ricette WHERE id = ?"; // Query con parametro
   $stmt = $conn_kitchen->prepare($sql);
-  $stmt->bind_param("i", $bookId); // Associa parametro
+  $stmt->bind_param("i", $recipesId); // Associa parametro
   $stmt->execute();
   $result = $stmt->get_result();
 

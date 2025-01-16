@@ -1,11 +1,11 @@
 <?php
-// Includi la connessione al database
+
 include 'connessione_ricette.php';
 
-// Inizializza un array vuoto per gli URL delle immagini
+
 $imageUrls = [];
 
-// Verifica se c'è una ricetta selezionata tramite sessione
+
 $selectedRecipeImage = null;
 if (isset($_SESSION['ricetta_selezionata'])) {
     // Recupera l'immagine della ricetta selezionata
@@ -36,7 +36,7 @@ if ($result->num_rows > 0) {
 $conn_kitchen->close();
 ?>
 
-<!-- HTML per il carousel -->
+<!-- Carousel -->
 <?php if (!empty($imageUrls)): ?>
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
@@ -45,7 +45,7 @@ $conn_kitchen->close();
             $indicatorOffset = 0;
             if ($selectedRecipeImage) {
                 echo '<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>';
-                $indicatorOffset = 1;  // Salta il primo indicatore per le immagini casuali
+                $indicatorOffset = 1;  //
             }
             // Aggiungi gli indicatori per le altre immagini
             foreach ($imageUrls as $index => $imageUrl): 

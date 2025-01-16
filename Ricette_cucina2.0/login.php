@@ -33,8 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Chiudi lo statement e la connessione
-    $stmt->close();
-    $conn_utenti->close();
-    echo "Finito";
+    $stmt->close();?><br><?php
+    echo "Hai sbagliato qualcosa";
 }
 ?>

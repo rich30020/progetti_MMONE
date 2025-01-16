@@ -15,8 +15,8 @@ if (isset($_SESSION['user_id'])) {
 }
 
 // Gestione della selezione della ricetta e salvataggio nella sessione
-if (isset($_GET['select_book'])) {
-  $ricettaId = $_GET['book_id'];
+if (isset($_GET['select_recipes'])) {
+  $ricettaId = $_GET['recipes_id'];
 
   // Salva l'ID della ricetta nella sessione
   $_SESSION['ricetta_selezionata'] = $ricettaId;
@@ -29,7 +29,7 @@ if (isset($_GET['select_book'])) {
   $stmt->close();
 
   // Reindirizza l'utente alla pagina ricetta.php con l'ID della ricetta
-  header("Location: ricetta.php?book_id=" . $ricettaId);
+  header("Location: ricetta.php?recipes_id=" . $ricettaId);
   exit();
 }
 
@@ -53,23 +53,37 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Carica solo le ricette cliccate per il carousel
-$carouselSql = "SELECT * FROM ricette WHERE clicks > 0";
-$carouselResult = $conn_kitchen->query($carouselSql);
 
-$randomRecipes = [];
-if ($carouselResult->num_rows > 0) {
-    while ($row = $carouselResult->fetch_assoc()) {
-        $randomRecipes[] = [
+// Carica tutte le ricette
+$sql = "SELECT * FROM ricette";
+$result = $conn_kitchen->query($sql);
+
+$library = [];
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $library[] = [
             'id' => $row['id'],
             'nome' => $row['nome'],
             'descrizione' => $row['descrizione'],
+            'ingredienti' => $row['ingredienti'],
             'image_url' => $row['image_url'],
             'tempo_di_preparazione' => $row['tempo_di_preparazione'],
             'grado_di_difficolta' => $row['grado_di_difficolta']
         ];
     }
 }
+
+// Seleziona fino a 3 ricette casuali per il carousel
+$randomRecipes = [];
+if (count($library) > 3) {
+    $randomKeys = array_rand($library, 3);
+    foreach ($randomKeys as $key) {
+        $randomRecipes[] = $library[$key];
+    }
+} else {
+    $randomRecipes = $library;
+}
+
 
 $conn_kitchen->close();
 ?>
@@ -127,7 +141,7 @@ $conn_kitchen->close();
       margin-top: 20px;
     }
 
-    .book {
+    .recipes {
       margin: 10px;
       padding: 10px;
       background-color: #fff;
@@ -139,12 +153,12 @@ $conn_kitchen->close();
       transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    .book:hover {
+    .recipes:hover {
       transform: scale(1.05);
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     }
 
-    .book button {
+    .recipes button {
       background-color: #f7b731;
       color: white;
       border: none;
@@ -156,7 +170,7 @@ $conn_kitchen->close();
       margin-top: 10px;
     }
 
-    .book button:hover {
+    .recipes button:hover {
       background-color: #f7b731;
     }
 
@@ -186,7 +200,7 @@ $conn_kitchen->close();
       margin-top: 40px;
     }
 
-    .book-image {
+    .recipes-image {
       width: 100%;
       height: 200px;
       object-fit: cover;
@@ -278,15 +292,16 @@ $conn_kitchen->close();
     <p>Ciao <?php echo $_SESSION["username"]; ?>, seleziona una Ricetta!</p>
     <div class="library-container">
       <?php foreach ($library as $ricetta): ?>
-        <div class="book">
+        <div class="recipes">
         <form method="get" action="area-privata.php">
-          <img src="<?= $ricetta['image_url'] ?>" alt="<?= $ricetta['nome'] ?>" class="book-image">
-          <span class="book-title"><?= $ricetta['nome']; ?></span>
-          <span class="book-time"><span class="text-bold">Tempo di preparazione:</span> <?= $ricetta['tempo_di_preparazione']; ?> minuti</span>
-          <span class="book-difficulty"><span class="text-bold">Grado di difficoltà:</span> <?= $ricetta['grado_di_difficolta']; ?></span>
-          <input type="hidden" name="book_id" value="<?= $ricetta['id']; ?>">
-          <button type="submit" name="select_book" class="btn btn-info-ricetta">Info Ricetta</button>
+          <img src="<?= $ricetta['image_url'] ?>" alt="<?= $ricetta['nome'] ?>" class="recipes-image">
+          <span class="recipes-title"><?= $ricetta['nome']; ?></span>
+          <span class="recipes-time"><span class="text-bold">Tempo di preparazione:</span> <?= $ricetta['tempo_di_preparazione']; ?> minuti</span>
+          <span class="recipes-difficulty"><span class="text-bold">Grado di difficoltà:</span> <?= $ricetta['grado_di_difficolta']; ?></span>
+          <input type="hidden" name="recipes_id" value="<?= $ricetta['id']; ?>">
+          <button type="submit" name="select_recipes" class="btn btn-info-ricetta">Info Ricetta</button>
         </form>
+
         </div>
       <?php endforeach; ?>
     </div>
@@ -303,13 +318,16 @@ $conn_kitchen->close();
         </div>
       </div>
     <?php endforeach; ?>
-  </div>
+</div>
 
-  <div class="text-center my-4">
+<div class="text-center my-4">
     <button id="reload-cards-button" class="btn btn-warning">Nuove Ricette</button>
-  </div>
+</div>
 
-  <script src="reload_card.js"></script>
+<script src='./reload_card.js'></script>
+
+
+  
 
   <footer class="text-center text-white" style="background-color: #f7b731;">
     <div class="container p-2">
