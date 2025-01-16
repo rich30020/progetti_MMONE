@@ -1,12 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="main.css">
-</head>
-<body>
 <?php
 session_start();
 
@@ -45,18 +36,36 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         echo '<form method="post" action="modifica_prenotazione.php">
                 <input type="hidden" name="prenotazione_id" value="' . htmlspecialchars($prenotazione_id) . '">
+
+                <!-- Numero Tavolo -->
                 <div class="form-group">
                     <label for="tavolo_id">Numero Tavolo</label>
-                    <input type="number" class="form-control" id="tavolo_id" name="tavolo_id" value="' . htmlspecialchars($tavolo_id) . '" required>
+                    <select class="form-control" id="tavolo_id" name="tavolo_id" required>
+                        ';
+
+                        // Recupera i numeri dei tavoli disponibili
+                        $sql_tavoli = "SELECT id, numero FROM tavoli";
+                        $result = $conn->query($sql_tavoli);
+                        while ($row = $result->fetch_assoc()) {
+                            $selected = ($row['id'] == $tavolo_id) ? 'selected' : ''; // Se il tavolo è già selezionato
+                            echo "<option value='" . $row['id'] . "' $selected> Tavolo " . $row['numero'] . "</option>";
+                        }
+
+        echo '  </select>
                 </div>
+
+                <!-- Data e Ora -->
                 <div class="form-group">
                     <label for="data_ora">Data e Ora</label>
                     <input type="datetime-local" class="form-control" id="data_ora" name="data_ora" value="' . htmlspecialchars($data_ora) . '" required>
                 </div>
+
+                <!-- Numero di Persone -->
                 <div class="form-group">
                     <label for="numero_persone">Numero di Persone</label>
                     <input type="number" class="form-control" id="numero_persone" name="numero_persone" value="' . htmlspecialchars($numero_persone) . '" required>
                 </div>
+
                 <button type="submit" name="aggiorna" class="btn btn-primary">Aggiorna Prenotazione</button>
               </form>';
 
@@ -94,9 +103,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
 
-    $stmt->close();
     $conn->close();
 }
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifica Prenotazione</title>
+    <link rel="stylesheet" href="main.css">
+    <style>
+        /* Aumenta l'altezza dell'input */
+        .form-control {
+            height: 50px; /* Imposta un'altezza più alta per gli input */
+            font-size: 1.1rem;
+        }
+
+        /* Selezione del tavolo */
+        select.form-control {
+            height: 50px; /* Stesso valore dell'input numerico */
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Modifica Prenotazione</h2>
+        <?php echo $form; ?>
+    </div>
 </body>
 </html>

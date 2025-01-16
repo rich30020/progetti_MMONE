@@ -130,7 +130,29 @@ $conn_kitchen->close();
 <form method="post" action="prenota.php" class="bg-light p-4 rounded shadow-sm">
     <div class="form-group">
         <label for="tavolo_id">Numero Tavolo</label>
-        <input type="number" class="form-control" id="tavolo_id" name="tavolo_id" required>
+        <select class="form-control" id="tavolo_id" name="tavolo_id" required>
+            <option value="" disabled selected>Scegli un Tavolo</option>
+            <?php 
+            // Ciclo sui tavoli per mostrarli nel select
+            foreach ($tavoli as $id => $tavolo): 
+                // Controlla se il tavolo è prenotato
+                $isBooked = false;
+                foreach ($prenotazioni_future as $prenotazione) {
+                    if ($prenotazione['tavolo_id'] == $id) {
+                        $isBooked = true;
+                        break;
+                    }
+                }
+
+                if ($isBooked) {
+                    continue; // Salta questo tavolo se è prenotato
+                }
+            ?>
+                <option value="<?= htmlspecialchars($id); ?>">
+                    Tavolo <?= htmlspecialchars($tavolo['numero_tavolo']); ?> - (<?= htmlspecialchars($tavolo['posti']); ?> posti)
+                </option>
+            <?php endforeach; ?>
+        </select>
     </div>
     <div class="form-group">
         <label for="data_ora">Data e Ora</label>
@@ -138,10 +160,17 @@ $conn_kitchen->close();
     </div>
     <div class="form-group">
         <label for="numero_persone">Numero di Persone</label>
-        <input type="number" class="form-control" id="numero_persone" name="numero_persone" required>
+        <select class="form-control" id="numero_persone" name="numero_persone" required>
+            <?php for ($i = 1; $i <= 10; $i++): ?>
+                <option value="<?= $i; ?>"><?= $i; ?> persone</option>
+            <?php endfor; ?>
+        </select>
     </div>
     <button type="submit" class="btn btn-success btn-block">Prenota</button>
 </form>
+
+
+
 
 <h2 class="text-center mt-5">Le Tue Prenotazioni</h2>
 <p class="text-center">Ciao <?php echo htmlspecialchars($_SESSION["nome"]); ?>, ecco le tue prenotazioni:</p>
