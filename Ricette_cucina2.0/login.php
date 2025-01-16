@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include 'connessione_utenti.php'; // Include la connessione al database utenti
+include 'connessione_ricette.php'; // Include la connessione al database utenti
 
 // Verifica se il metodo di richiesta è POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
