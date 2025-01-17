@@ -1,0 +1,294 @@
+/* Reset and Box Model */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    background-color: #fafafa;
+    color: #333;
+    line-height: 1.6;
+    transition: background-color 0.3s ease;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* Navbar Styling */
+.navbar {
+    background-color: #1c1e22;
+    padding: 15px 30px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+.navbar:hover {
+    background-color: #333;
+}
+
+.navbar-brand,
+.nav-link {
+    color: #fff !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.navbar-brand:hover,
+.nav-link:hover {
+    color: #ff7043 !important;
+    text-decoration: underline;
+}
+
+/* Table Map Styling */
+.table-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 30px;
+    margin-top: 100px;
+    padding: 20px;
+    transition: grid-template-columns 0.3s ease;
+}
+
+.table-map .table-available {
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    text-align: center;
+    color: #333;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    height: 250px;
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center;
+}
+
+.table-map .table-available:hover {
+    transform: scale(1.05);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.table-map .table-available::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.table-map .table-available:hover::after {
+    opacity: 1;
+}
+
+.table-map img {
+    display: block;
+    margin-bottom: 15px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 10px;
+    width: 70%;
+    height: auto;
+    opacity: 0.7;
+}
+
+.table-map img:hover {
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+}
+
+
+.table-map .table-number {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #ff7043;
+    margin-bottom: 10px;
+}
+
+.table-map .table-details {
+    font-size: 1rem;
+    color: #495057;
+    margin-top: 10px;
+}
+
+.table-map .table-details,
+.table-map .table-number {
+    margin-bottom: 15px; /* More space between the text and the button */
+}
+
+/* Form Styling */
+form {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 40px auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+form:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+}
+
+form .form-group {
+    margin-bottom: 25px;
+}
+
+form .form-group label {
+    font-weight: bold;
+    color: #333;
+    font-size: 1.1rem;
+    margin-bottom: 8px;
+}
+
+form .form-control {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+    background-color: #f9f9f9;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+form .form-control:focus {
+    border-color: #ff7043;
+    box-shadow: 0 0 8px rgba(255, 112, 67, 0.5);
+}
+
+form button[type="submit"] {
+    background-color: #ff7043;
+    color: #fff;
+    padding: 15px;
+    font-weight: bold;
+    width: 100%;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    margin-top: 20px;
+}
+
+form button[type="submit"]:hover {
+    background-color: #e65c2f;
+    transform: translateY(-3px);
+}
+
+form .form-control::placeholder {
+    color: #aaa;
+}
+
+/* Button Styles */
+button {
+    border-radius: 30px;
+    font-weight: bold;
+    padding: 12px 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: #ff7043;
+    color: #fff;
+    border: none;
+}
+
+button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Back Button */
+.back-button {
+    display: block;
+    width: 200px;
+    margin: 20px auto;
+    padding: 12px;
+    background-color: #ff7043;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #e65c2f;
+}
+
+/* Text Styles */
+.text-center {
+    color: #333;
+    font-weight: bold;
+}
+
+h2 {
+    font-weight: 700;
+    font-size: 2.4rem;
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+.bg-light {
+    background-color: #f9f9f9 !important;
+}
+
+.rounded {
+    border-radius: 20px !important;
+}
+
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.mt-5 {
+    margin-top: 3rem !important;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+    .table-map {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+
+    .container {
+        margin-top: 80px;
+    }
+
+    form {
+        padding: 30px;
+    }
+
+    .navbar {
+        padding: 1rem;
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    /* Adatta le immagini degli SVG */
+    .table-map img {
+        width: 150px;
+        height: 150px;
+    }
+}

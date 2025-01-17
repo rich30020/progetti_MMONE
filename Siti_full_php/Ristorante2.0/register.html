@@ -1,0 +1,93 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema di Login</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7b731;
+            font-family: lato;
+
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 300px;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        form > input {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        form > input[type="submit"] {
+            background-color: #f7b731;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        form > input[type="submit"]:hover {
+            background-color: #fd9644;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            text-align: center;
+        }
+
+        a {
+            color: #f7b731;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Form di registrazione -->
+    <form action='register.php' method="POST">
+        <h2>Registrati</h2>
+
+        <!-- Campo per l'email -->
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" required>
+
+        <!-- Campo per l'username -->
+        <label for="username">Username</label>
+        <input type="text" name="username" id="username" required>
+
+        <!-- Campo per la password -->
+        <label for="password">Password</label>
+        <input type="password" name="password" id="password" required>
+
+        <!-- Campo per il telefono -->
+        <label for="tel">Telefono</label>
+        <input type="tel" name="tel" id="tel" required>
+
+        <!-- Bottone per inviare il modulo -->
+        <input type="submit" value="Invia">
+        <p>Hai già un account? <a href="login.html">Accedi</a></p>
+    </form>
+</body>
+</html>
