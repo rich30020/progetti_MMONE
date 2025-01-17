@@ -10,7 +10,7 @@ include 'connessione_ricette.php';
 
 // Funzione per ottenere ricette casuali
 function get_random_recipes($conn_kitchen) {
-    $sql = "SELECT * FROM ricette ORDER BY RAND() LIMIT 3"; // Seleziona 3 ricette casuali
+    $sql = "SELECT * FROM ricette ORDER BY RAND() LIMIT 3"; 
     $result = $conn_kitchen->query($sql);
 
     $recipes = [];
@@ -25,7 +25,7 @@ function get_random_recipes($conn_kitchen) {
 // Controlla se la richiesta è AJAX
 if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') {
     $randomRecipes = get_random_recipes($conn_kitchen);
-    echo json_encode(['recipes' => $randomRecipes]); // Restituisce ricette in formato JSON
+    echo json_encode(['recipes' => $randomRecipes]);
     $conn_kitchen->close();
     exit;
 }
@@ -39,5 +39,5 @@ if ($randomRecipes) {
     die("Errore: Nessuna ricetta trovata.");
 }
 
-$conn_kitchen->close(); // Chiude la connessione al database
+$conn_kitchen->close(); 
 ?>

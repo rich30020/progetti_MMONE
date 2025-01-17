@@ -1,21 +1,5 @@
 <?php
-session_start();
-
-if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
-    header("location: login.html");
-    exit;
-}
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ristorante";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connessione fallita: " . $conn->connect_error);
-}
+include 'connessione_ristorante.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $utente_id = $_SESSION['user_id'];
@@ -23,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data_ora = $_POST['data_ora'];
     $numero_persone = $_POST['numero_persone'];
 
-    // Verifica se la data e l'ora sono valide (solo alle ore precise o alle mezz'ore)
+    // (solo alle ore precise o alle mezz'ore)
     $minute = (int)date('i', strtotime($data_ora));
     if ($minute != 0 && $minute != 30) {
         echo "Errore: puoi prenotare solo alle ore precise o alle mezz'ore.";
@@ -50,7 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($count > 0) {
                 echo "Errore: il tavolo è già prenotato per questa data e ora.";
             } else {
-                // Inserisci la nuova prenotazione
+
                 $sql = "INSERT INTO prenotazioni (utente_id, tavolo_id, data_ora, numero_persone, status) VALUES (?, ?, ?, ?, 'confermata')";
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param("iisi", $utente_id, $tavolo_id, $data_ora, $numero_persone);
@@ -67,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-// Carica tutti i tavoli e le loro capacità
+
 $sql = "SELECT id, numero_tavolo, posti FROM tavoli";
 $result = $conn->query($sql);
 $tavoli = [];
@@ -80,7 +64,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Carica le prenotazioni future
+
 $sql = "SELECT tavolo_id, data_ora FROM prenotazioni WHERE data_ora > NOW()";
 $result = $conn->query($sql);
 
@@ -94,7 +78,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-// Chiudi la connessione al database qui, solo dopo aver terminato tutte le operazioni di query
+
 $conn->close();
 ?>
 

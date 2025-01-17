@@ -27,7 +27,7 @@ $sql = "SELECT image_url FROM ricette WHERE clicks > 0";
 $result = $conn_kitchen->query($sql);
 
 if ($result->num_rows > 0) {
-    // Aggiungi gli URL delle immagini all'array
+    // Aggiunge gli URL delle immagini all'array
     while ($row = $result->fetch_assoc()) {
         $imageUrls[] = $row['image_url'];
     }
@@ -41,13 +41,12 @@ $conn_kitchen->close();
     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
             <?php 
-            // Se c'è una ricetta selezionata, aggiungila prima delle immagini casuali
+            // Se c'è una ricetta selezionata, la aggiunge
             $indicatorOffset = 0;
             if ($selectedRecipeImage) {
                 echo '<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>';
                 $indicatorOffset = 1;  //
             }
-            // Aggiungi gli indicatori per le altre immagini
             foreach ($imageUrls as $index => $imageUrl): 
                 if ($selectedRecipeImage && $index === 0) continue; // Evita di duplicare il primo
                 echo '<li data-target="#carouselExampleIndicators" data-slide-to="' . ($index + $indicatorOffset) . '" class="' . ($index === 0 && !$selectedRecipeImage ? 'active' : '') . '"></li>';

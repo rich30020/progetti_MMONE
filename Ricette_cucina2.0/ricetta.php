@@ -1,12 +1,12 @@
 <?php
-session_start(); // Avvia la sessione
+session_start(); 
 
 if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
-  header("location: login.html"); // Reindirizza se non loggato
+  header("location: login.html"); 
   exit;
 }
 
-include 'connessione_ricette.php'; // Include la connessione al database
+include 'connessione_ricette.php'; 
 
 $ricetta = null;
 
@@ -15,14 +15,14 @@ if (isset($_GET['recipes_id'])) {
 
   $sql = "SELECT * FROM ricette WHERE id = ?"; // Query con parametro
   $stmt = $conn_kitchen->prepare($sql);
-  $stmt->bind_param("i", $recipesId); // Associa parametro
+  $stmt->bind_param("i", $recipesId); 
   $stmt->execute();
   $result = $stmt->get_result();
 
   if ($result->num_rows > 0) {
     $ricetta = $result->fetch_assoc(); // Ottiene dati della ricetta
   } else {
-    die("Ricetta non trovata."); // Mostra errore se la ricetta non esiste
+    die("Ricetta non trovata."); 
   }
   $stmt->close();
 } else {
@@ -110,7 +110,6 @@ $conn_kitchen->close();
 
   <div class="container">
     <?php if ($ricetta): ?>
-      <!-- Carosello per mostrare l'immagine della ricetta -->
       <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
         <ol class="carousel-indicators">
           <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
@@ -122,7 +121,7 @@ $conn_kitchen->close();
         </div>
       </div>
 
-      <!-- Dettagli della ricetta -->
+
       <h1><?= htmlspecialchars($ricetta['nome']) ?></h1>
       <p><?= htmlspecialchars($ricetta['descrizione']) ?></p>
 

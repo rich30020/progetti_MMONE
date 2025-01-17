@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Gestisce il click sul bottone "Nuove Ricette"
   document.querySelector('#reload-cards-button').addEventListener('click', function () {
-    console.log('Reload button clicked');  // Verifica che il bottone venga cliccato
+    console.log('Reload button clicked');
     fetch('ricetta_random.php', {
       headers: {
         'X-Requested-With': 'XMLHttpRequest'
@@ -16,9 +16,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return response.json();
       })
       .then(data => {
-        console.log('Data received:', data);  // Verifica i dati ricevuti
+        console.log('Data received:', data);
         const cardDeck = document.querySelector('.card-deck');
-        cardDeck.innerHTML = ''; // Pulisce il contenuto attuale delle card
+        cardDeck.innerHTML = ''; 
 
         // Verifica che ci siano almeno 3 ricette e mostralo
         if (data.recipes && data.recipes.length >= 3) {
@@ -39,6 +39,6 @@ document.addEventListener('DOMContentLoaded', function () {
           console.error('Errore: meno di 3 ricette trovate.');
         }
       })
-      .catch(error => console.error('Errore nel caricamento delle ricette:', error)); // Gestisce eventuali errori
+      .catch(error => console.error('Errore nel caricamento delle ricette:', error));
   });
 });
