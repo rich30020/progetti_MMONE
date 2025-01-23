@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('Document ready');  // Verifica che il documento sia pronto
 
-  // Gestisce il click sul bottone "Nuove Ricette"
+  // click sul bottone "Nuove Ricette"
   document.querySelector('#reload-cards-button').addEventListener('click', function () {
     console.log('Reload button clicked');
     fetch('ricetta_random.php', {
@@ -11,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Network response was not ok ' + response.statusText);
+          throw new Error('La risposta della rete è errata ' + response.statusText);
         }
         return response.json();
       })
@@ -22,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // Verifica che ci siano almeno 3 ricette e mostralo
         if (data.recipes && data.recipes.length >= 3) {
-          data.recipes.slice(0, 3).forEach(ricetta => {  // Mostra al massimo 3 ricette
+          data.recipes.slice(0, 3).forEach(ricetta => {  // massimo 3 ricette
             const card = document.createElement('div');
             card.className = 'card';
             card.innerHTML = `

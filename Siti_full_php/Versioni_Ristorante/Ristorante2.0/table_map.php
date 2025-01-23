@@ -1,7 +1,7 @@
 <?php
 include 'connessione_ristorante.php'; 
 
-// Carica le prenotazioni future
+
 $sql = "SELECT tavolo_id, data_ora FROM prenotazioni WHERE data_ora > NOW()";
 $result = $conn->query($sql);
 
@@ -33,7 +33,7 @@ if (empty($tavoli)) {
     echo "<p>Nessun tavolo disponibile.</p>";
 }
 
-// Chiudi la connessione
+
 $conn->close();
 ?>
 
@@ -41,7 +41,7 @@ $conn->close();
     <h2 class="text-center mt-5" style="color: black;">Mappa dei Tavoli</h2>
     <div class="table-map">
         <?php 
-        // Ciclo sui tavoli per mostrarli solo se $tavoli non è vuoto
+        // Mostra i tavoli solo se $tavoli non è vuoto
         if (!empty($tavoli)) {
             foreach ($tavoli as $id => $tavolo): 
                 // Controlla se il tavolo è prenotato
@@ -54,10 +54,10 @@ $conn->close();
                 }
 
                 if ($isBooked) {
-                    continue; // Salta questo tavolo se è prenotato
+                    continue; // Salta questo tavolo
                 }
         ?>
-            <!-- Utilizza l'immagine SVG per rappresentare il tavolo -->
+            
             <div class="table-available">
                 <img src="images/table.svg" alt="Tavolo <?= htmlspecialchars($tavolo['numero_tavolo']); ?>" width="100" height="100">
                 <br>

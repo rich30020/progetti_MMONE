@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data_ora = $_POST['data_ora'];
     $numero_persone = $_POST['numero_persone'];
 
-    // (solo alle ore precise o alle mezz'ore)
+    
     $minute = (int)date('i', strtotime($data_ora));
     if ($minute != 0 && $minute != 30) {
         echo "Errore: puoi prenotare solo alle ore precise o alle mezz'ore.";

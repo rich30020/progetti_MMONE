@@ -2,7 +2,6 @@
 session_start();
 include 'connessione_ricette.php';
 
-// Verifica se l'utente è loggato
 if (!isset($_SESSION['loggato']) || $_SESSION['loggato'] !== true) {
     header("location: login.html");
     exit;
@@ -18,17 +17,17 @@ if (isset($_SESSION['user_id'])) {
 if (isset($_GET['select_recipes'])) {
   $ricettaId = $_GET['recipes_id'];
 
-  // Salva l'ID della ricetta nella sessione
+
   $_SESSION['ricetta_selezionata'] = $ricettaId;
 
-  // Aggiorna il conteggio dei clic per questa ricetta
+  // Aggiorna i click della ricetta
   $updateQuery = "UPDATE ricette SET clicks = clicks + 1 WHERE id = ?";
   $stmt = $conn_kitchen->prepare($updateQuery);
   $stmt->bind_param('i', $ricettaId);
   $stmt->execute();
   $stmt->close();
 
-  // Reindirizza l'utente alla pagina ricetta.php con l'ID della ricetta
+  // Reindirizza l'utente alla pagina della ricetta
   header("Location: ricetta.php?recipes_id=" . $ricettaId);
   exit();
 }
@@ -53,25 +52,6 @@ if ($result->num_rows > 0) {
     }
 }
 
-
-// Carica tutte le ricette
-$sql = "SELECT * FROM ricette";
-$result = $conn_kitchen->query($sql);
-
-$library = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $library[] = [
-            'id' => $row['id'],
-            'nome' => $row['nome'],
-            'descrizione' => $row['descrizione'],
-            'ingredienti' => $row['ingredienti'],
-            'image_url' => $row['image_url'],
-            'tempo_di_preparazione' => $row['tempo_di_preparazione'],
-            'grado_di_difficolta' => $row['grado_di_difficolta']
-        ];
-    }
-}
 
 // Seleziona fino a 3 ricette casuali per il carousel
 $randomRecipes = [];
