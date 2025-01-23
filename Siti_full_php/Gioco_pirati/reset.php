@@ -14,7 +14,7 @@ $_SESSION['messaggio'] = "La tua avventura pirata è stata resettata!";
 
 // Elimina tutti i giocatori e reimposta le navi nemiche nel database
 $query = "TRUNCATE TABLE giocatori";
-$conn->exec($query);
+$conn->query($query);
 
 $query = "UPDATE navi_nemiche SET vive = TRUE, vita = CASE
     WHEN livello = 1 THEN 50

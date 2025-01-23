@@ -3,11 +3,12 @@ session_start();
 include('connessione.php');  // Connessione al database
 
 // Recupera i dettagli del giocatore
-$query = "SELECT * FROM giocatori WHERE id = :id";
+$query = "SELECT * FROM giocatori WHERE id = ?";
 $stmt = $conn->prepare($query);
-$stmt->bindParam(':id', $_SESSION['id'], PDO::PARAM_INT);
+$stmt->bind_param("i", $_SESSION['id']);
 $stmt->execute();
-$giocatore = $stmt->fetch(PDO::FETCH_ASSOC);
+$result = $stmt->get_result();
+$giocatore = $result->fetch_assoc();
 
 if (!$giocatore) {
     die("Errore: Dettagli del giocatore non trovati!");
@@ -20,11 +21,12 @@ $livello_nave = $giocatore['livello_nave'];
 $messaggio = "";
 
 // Ottieni i dettagli della nave nemica dal database
-$query = "SELECT * FROM navi_nemiche WHERE livello = :livello AND vive = TRUE";
+$query = "SELECT * FROM navi_nemiche WHERE livello = ? AND vive = TRUE";
 $stmt = $conn->prepare($query);
-$stmt->bindParam(':livello', $livello_nave, PDO::PARAM_INT);
+$stmt->bind_param("i", $livello_nave);
 $stmt->execute();
-$nave = $stmt->fetch(PDO::FETCH_ASSOC);
+$result = $stmt->get_result();
+$nave = $result->fetch_assoc();
 
 if (!$nave) {
     die("Errore: Dettagli della nave nemica non trovati!");
@@ -37,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($livello_nave > 5) {
         $danno = 30; // Imposta il danno a 30 dopo il livello 5
     } else {
-        $danno = ($attacco == "semplice") ? 15 : 50; 
+        $danno = ($attacco == "semplice") ? 15 : 50;
     }
 
     if (($attacco == "semplice" && $palle > 0) || ($attacco == "complesso" && $palle >= 5)) {
@@ -48,16 +50,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nave['vita'] -= $danno;
 
             // Aggiorna la vita della nave nel database
-            $stmt = $conn->prepare("UPDATE navi_nemiche SET vita = :vita WHERE livello = :livello");
-            $stmt->bindParam(':vita', $nave['vita'], PDO::PARAM_INT);
-            $stmt->bindParam(':livello', $livello_nave, PDO::PARAM_INT);
+            $stmt = $conn->prepare("UPDATE navi_nemiche SET vita = ? WHERE livello = ?");
+            $stmt->bind_param("ii", $nave['vita'], $livello_nave);
             $stmt->execute();
 
             if ($nave['vita'] <= 0) {
                 $saldo += $nave['vincita'];
                 $messaggio = "Hai distrutto la nave nemica e guadagnato €" . $nave['vincita'] . "!";
-                $stmt = $conn->prepare("UPDATE navi_nemiche SET vive = FALSE WHERE livello = :livello");
-                $stmt->bindParam(':livello', $livello_nave, PDO::PARAM_INT);
+                $stmt = $conn->prepare("UPDATE navi_nemiche SET vive = FALSE WHERE livello = ?");
+                $stmt->bind_param("i", $livello_nave);
                 $stmt->execute();
                 $livello_nave++;
                 if ($livello_nave > 10) {
@@ -72,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             $messaggio = "L'attacco $attacco non ha avuto successo!";
             // Attacco del nemico solo se l'attacco del giocatore manca
-            if (rand(1, 3) == 1) { 
+            if (rand(1, 3) == 1) {
                 $danno_nemico = $nave['danno'];
                 $salute -= $danno_nemico;
                 $messaggio .= "<br>La nave nemica ti ha colpito! Danno subito: $danno_nemico";
@@ -92,8 +93,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 
     // Salva i progressi
-    $stmt = $conn->prepare("UPDATE giocatori SET salute = :salute, saldo = :saldo, palle = :palle, livello_nave = :livello_nave WHERE id = :id");
-    $stmt->execute([':salute' => $salute, ':saldo' => $saldo, ':palle' => $palle, ':livello_nave' => $livello_nave, ':id' => $_SESSION['id']]);
+    $stmt = $conn->prepare("UPDATE giocatori SET salute = ?, saldo = ?, palle = ?, livello_nave = ? WHERE id = ?");
+    $stmt->bind_param("iiiii", $salute, $saldo, $palle, $livello_nave, $_SESSION['id']);
+    $stmt->execute();
 
     $_SESSION['saldo'] = $saldo;
     $_SESSION['salute'] = $salute;

@@ -8,16 +8,17 @@ if (!isset($_SESSION['id'])) {
     // Crea un nuovo giocatore nel database e imposta l'ID della sessione
     $stmt = $conn->prepare("INSERT INTO giocatori (salute, saldo, palle, livello_nave) VALUES (300, 0, 20, 1)");
     $stmt->execute();
-    $_SESSION['id'] = $conn->lastInsertId();
+    $_SESSION['id'] = $conn->insert_id;
     $_SESSION['messaggio'] = "Benvenuto! Inizia la tua avventura pirata!";
 }
 
 $id = $_SESSION['id'];
-$query = "SELECT * FROM giocatori WHERE id = :id";
+$query = "SELECT * FROM giocatori WHERE id = ?";
 $stmt = $conn->prepare($query);
-$stmt->bindParam(':id', $id, PDO::PARAM_INT);
+$stmt->bind_param('i', $id);
 $stmt->execute();
-$giocatore = $stmt->fetch(PDO::FETCH_ASSOC);
+$result = $stmt->get_result();
+$giocatore = $result->fetch_assoc();
 
 $salute = $giocatore['salute'];
 $saldo = $giocatore['saldo'];
@@ -26,11 +27,12 @@ $livello_nave = $giocatore['livello_nave'];
 $messaggio = $_SESSION['messaggio'];
 
 // Recupera i dettagli della nave nemica dal database
-$query = "SELECT * FROM navi_nemiche WHERE livello = :livello AND vive = TRUE";
+$query = "SELECT * FROM navi_nemiche WHERE livello = ? AND vive = TRUE";
 $stmt = $conn->prepare($query);
-$stmt->bindParam(':livello', $livello_nave, PDO::PARAM_INT);
+$stmt->bind_param('i', $livello_nave);
 $stmt->execute();
-$nave_nemica = $stmt->fetch(PDO::FETCH_ASSOC);
+$result = $stmt->get_result();
+$nave_nemica = $result->fetch_assoc();
 
 if (!$nave_nemica) {
     $nave_nemica = [
@@ -107,8 +109,6 @@ if (!$nave_nemica) {
                 <button type="submit">Reset</button>
             </form>
         </div>
-
-
+    </div>
 </body>
 </html>
-
