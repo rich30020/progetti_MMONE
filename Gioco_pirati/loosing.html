@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css" class="rel">
+    <link rel="stylesheet" href="gioco.php">
+    <link rel="stylesheet" href="index.php">
+    <link rel="stylesheet" href="reset.php">
+    <title>Fine del Gioco</title>
+    <style>
+        body {
+            font-size: 45px;
+            display: flex;
+            flex-direction: column; /* This ensures elements are stacked vertically */
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2C3E50;
+            color: #ECF0F1;
+            font-family: 'Pirata One', sans-serif;
+            text-align: center;
+        }
+        form {
+            margin-top: 20px; /* Adds some space between the text and button */
+        }
+    </style>
+</head>
+<body>
+    <h1>Peccato, ma hai finito le palle di cannone, il saldo ritorna a 0€</h1>
+    <form method="POST" action="reset.php">
+        <button type="submit">Torna a giocare</button>
+    </form>
+</body>
+</html>
