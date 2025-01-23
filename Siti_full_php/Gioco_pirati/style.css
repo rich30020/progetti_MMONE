@@ -57,7 +57,7 @@ header h1 {
     bottom: 130px; 
     width: 100%;
     height: 150%;
-    animation: sway 2s infinite alternate;
+    animation: sway 0.5s infinite alternate;
 }
 
 

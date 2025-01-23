@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (($attacco == "semplice" && $palle > 0) || ($attacco == "complesso" && $palle >= 5)) {
         $palle -= ($attacco == "semplice") ? 1 : 5;
-        $probabilita = 1.0; // Probabilità di successo al 100%
+        $probabilita = 0.5; // Probabilità di successo al 100%
 
         if (rand(1, 100) <= $probabilita * 100) {
             $nave['vita'] -= $danno;
