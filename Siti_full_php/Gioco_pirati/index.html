@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regole del Gioco Pirata</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #2C3E50;
+            color: #ECF0F1;
+            font-family: 'Pirata One', sans-serif;
+            text-align: center;
+        }
+        h1 {
+            font-size: 75px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 55px;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+        a {
+            text-decoration: none;
+        }
+        button {
+            background-color: #E74C3C;
+            color: #ECF0F1;
+            border: none;
+            padding: 15px 30px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: background-color 0.3s ease;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        button:hover {
+            background-color: #C0392B;
+        }
+        li {
+            font-size: 35px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Benvenuto al Gioco Pirata!</h1>
+    <p>In questo gioco, assumerai il ruolo di un pirata che deve distruggere navi nemiche e raccogliere ricchezze. Ecco come funziona:</p>
+    <ul>
+        <li>Ogni nave ha un determinato livello e vita. La tua missione è distruggerle tutte!</li>
+        <li>Puoi scegliere tra due tipi di attacchi: semplice e complesso.</li>
+        <li>Gli attacchi semplici infliggono 50 danni e consumano 1 palla di cannone.</li>
+        <li>Gli attacchi complessi infliggono 100 danni e consumano 5 palle di cannone.</li>
+        <li>Se distruggi una nave, guadagni una ricompensa in euro.</li>
+        <li>Se esaurisci le palle di cannone prima di distruggere la nave nemica di livello 10, perderai e il tuo saldo tornerà a 0€.</li>
+        <li>Il gioco si resetta dopo che raggiungi e distruggi la nave di livello 10.</li>
+    </ul>
+    <button onclick="location.href='index.php'">Inizia il Gioco</button>
+</body>
+</html>

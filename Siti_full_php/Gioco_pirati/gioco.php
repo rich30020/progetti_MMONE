@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('connessione.php');  // Connessione al database
+include('connessione.php');  
 
 // Recupera i dettagli del giocatore
 $query = "SELECT * FROM giocatori WHERE id = ?";
@@ -36,15 +36,11 @@ if (!$nave) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $attacco = $_POST['attacco'];
 
-    if ($livello_nave > 5) {
-        $danno = 30; // Imposta il danno a 30 dopo il livello 5
-    } else {
-        $danno = ($attacco == "semplice") ? 15 : 50;
-    }
+    $danno = ($attacco == "semplice") ? 50 : 100; // Imposta i danni degli attacchi qui
 
     if (($attacco == "semplice" && $palle > 0) || ($attacco == "complesso" && $palle >= 5)) {
         $palle -= ($attacco == "semplice") ? 1 : 5;
-        $probabilita = 0.75; // Probabilità di successo al 75%
+        $probabilita = 1.0; // Probabilità di successo al 100%
 
         if (rand(1, 100) <= $probabilita * 100) {
             $nave['vita'] -= $danno;
@@ -65,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $livello_nave = 1;
                     $messaggio .= " Congratulazioni, hai vinto! Il gioco ricomincia.";
                 }
-                $palle = 20;
+                $palle = 10; // Reset delle palle di cannone a 40
                 $salute = 300; // Reset della salute a 300
             } else {
                 $messaggio = "Hai colpito la nave nemica! Vita rimanente: " . $nave['vita'];

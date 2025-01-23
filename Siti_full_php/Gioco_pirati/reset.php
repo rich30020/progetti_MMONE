@@ -1,8 +1,8 @@
 <?php
 session_start();
-session_destroy(); // Distrugge la sessione corrente
+session_destroy(); 
 
-include('connessione.php');  // Connessione al database
+include('connessione.php');  
 
 // Avvia una nuova sessione
 session_start();
