@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (($attacco == "semplice" && $palle > 0) || ($attacco == "complesso" && $palle >= 5)) {
         $palle -= ($attacco == "semplice") ? 1 : 5;
-        $probabilita = 0.5; // Probabilità di successo al 100%
+        $probabilita = 0.5; // Probabilità di successo al 50%
 
         if (rand(1, 100) <= $probabilita * 100) {
             $nave['vita'] -= $danno;
@@ -61,7 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $livello_nave = 1;
                     $messaggio .= " Congratulazioni, hai vinto! Il gioco ricomincia.";
                 }
-                $palle = 10; // Reset delle palle di cannone a 40
+                $palle = 10; // Reset delle palle di cannone a 10
                 $salute = 300; // Reset della salute a 300
             } else {
                 $messaggio = "Hai colpito la nave nemica! Vita rimanente: " . $nave['vita'];
@@ -76,7 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     } else {
-        // Condizione per il messaggio finale e il redirect
+        // Se si finiscono le palle di cannone... stampa $messaggio
         if ($livello_nave == 10 && $nave['vita'] > 0 && $palle <= 0) {
             $saldo = 0;
             header("Location: fine_gioco.html");

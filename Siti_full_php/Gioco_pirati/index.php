@@ -5,7 +5,7 @@ include('connessione.php');
 session_start();
 
 if (!isset($_SESSION['id'])) {
-    // Crea un nuovo giocatore nel database e imposta l'ID della sessione
+    // Crea un nuovo giocatore nel database
     $stmt = $conn->prepare("INSERT INTO giocatori (salute, saldo, palle, livello_nave) VALUES (300, 0, 10, 1)");
     $stmt->execute();
     $_SESSION['id'] = $conn->insert_id;
@@ -26,7 +26,7 @@ $palle = $giocatore['palle'];
 $livello_nave = $giocatore['livello_nave'];
 $messaggio = $_SESSION['messaggio'];
 
-// Recupera i dettagli della nave nemica dal database
+// Prende i dettagli della nave nemica dal database
 $query = "SELECT * FROM navi_nemiche WHERE livello = ? AND vive = TRUE";
 $stmt = $conn->prepare($query);
 $stmt->bind_param('i', $livello_nave);
@@ -48,8 +48,10 @@ if (!$nave_nemica) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="pngwing.com.png">
     <title>Gioco Pirata</title>
     <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
     <header>
@@ -68,7 +70,7 @@ if (!$nave_nemica) {
             <p><?php echo $messaggio; ?></p>
         </div>
 
-        <!-- Dettagli della nave nemica -->
+        
         <div id="naveNemica">
             <h3>Nave Nemica (Livello <?php echo $livello_nave; ?>)</h3>
             <p>Vita: <?php echo $nave_nemica['vita']; ?></p>
