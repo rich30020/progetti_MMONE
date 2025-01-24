@@ -8,6 +8,7 @@ include 'connessione.php';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="Immagine.png">
     <title>Sherlock Holmes - Caso</title>
     <link rel="stylesheet" href="style.css">
     <style>
