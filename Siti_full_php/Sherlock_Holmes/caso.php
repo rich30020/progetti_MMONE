@@ -213,6 +213,7 @@ include 'connessione.php';
             $row = $result->fetch_assoc();
             ?>
             <h2><?php echo htmlspecialchars($row['titolo']); ?></h2>
+            <!-- nl2br = per andarea a capo -->
             <p><?php echo nl2br(htmlspecialchars($row['dettagli'])); ?></p>
             <h3>Sospetti:</h3>
             <div class="sospetti-form">
