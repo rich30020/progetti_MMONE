@@ -15,16 +15,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $durata = $conn->real_escape_string($_POST['durata']);
     $difficolta = $conn->real_escape_string($_POST['difficolta']);
     $commenti = $conn->real_escape_string($_POST['commenti']);
+    //Estrae il numero intero da una variabile
     $punti = intval($_POST['punti']);
     $foto = $_FILES['foto']['name'];
     $target_dir = "uploads/";
 
+    //Crea la directory dentro ad uploads
     if (!is_dir($target_dir)) {
         mkdir($target_dir, 0777, true);
     }
 
     $target_file = $target_dir . basename($_FILES["foto"]["name"]);
-
+    //Sposta un file caricato in una nuova posizione
     if (move_uploaded_file($_FILES["foto"]["tmp_name"], $target_file)) {
         $sql = "SELECT id, punti_escursionistici, livello_esperienza FROM utenti WHERE nome='$nome'";
         $result = $conn->query($sql);
