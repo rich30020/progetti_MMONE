@@ -16,7 +16,8 @@ $percorsi = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Task - Sentieri Proposti</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="pngwing.com.png">
 </head>
 <body>
     <?php include 'navbar.php'; ?>
@@ -28,7 +29,7 @@ $percorsi = $conn->query($sql);
                     <h3><?php echo $row['sentiero']; ?></h3>
                     <p>Durata: <?php echo $row['durata']; ?></p>
                     <p>Difficoltà: <?php echo $row['difficolta']; ?></p>
-                    <p>Commenti: <?php echo $row['commenti']; ?></p>
+                    <p align="justify">Commenti: <?php echo $row['commenti']; ?></p>
                     <?php if ($row['foto']): ?>
                         <img src="<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
                     <?php endif; ?>

@@ -21,7 +21,8 @@ $escursioni = $conn->query($sql);
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Utente</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="pngwing.com.png">
 </head>
 <body>
     <?php include 'navbar.php'; ?>
