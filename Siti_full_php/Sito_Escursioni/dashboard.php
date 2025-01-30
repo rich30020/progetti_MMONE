@@ -42,7 +42,7 @@ $escursioni = $conn->query($sql);
                         <p>Commenti: <?php echo $row['commenti']; ?></p>
                         <p>Punti: <?php echo $row['punti']; ?></p>
                         <?php if ($row['foto']): ?>
-                            <img src="uploads/<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
+                            <img id="foto_iniziali" src="uploads/<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
                         <?php endif; ?>
                     </li>
                 <?php endwhile; ?>
