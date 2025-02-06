@@ -18,7 +18,6 @@ class Giocatore {
     }
 }
 
-// Avvio della sessione
 session_start();
 
 $giocatoreId = 1;
@@ -27,13 +26,11 @@ include 'connessione.php';
 // Creazione dell'oggetto Giocatore
 $giocatore = new Giocatore($conn, $giocatoreId);
 
-// Reset dei punti
 $giocatore->resetPunti();
 
-// Distruzione della sessione
 session_destroy();
 
-// Reindirizzamento alla pagina principale
+
 header('Location: index.php');
 exit();
 ?>

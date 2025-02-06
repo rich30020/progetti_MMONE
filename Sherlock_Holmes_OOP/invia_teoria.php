@@ -9,7 +9,7 @@ class Giocatore {
         $this->giocatoreId = $giocatoreId;
     }
 
-    // Metodo per aggiornare i punti del giocatore
+
     public function aggiornaPunti($punti) {
         $stmt = $this->conn->prepare("UPDATE giocatori SET punti = punti + ? WHERE giocatore_id = ?");
         $stmt->bind_param("ii", $punti, $this->giocatoreId);
@@ -17,7 +17,6 @@ class Giocatore {
         $stmt->close();
     }
 
-    // Metodo per ottenere i punti del giocatore
     public function ottieniPunti() {
         $stmt = $this->conn->prepare("SELECT punti FROM giocatori WHERE giocatore_id = ?");
         $stmt->bind_param("i", $this->giocatoreId);
@@ -29,7 +28,7 @@ class Giocatore {
         return $punti;
     }
 
-    // Metodo per resettare i punti del giocatore
+
     public function resetPunti() {
         $stmt = $this->conn->prepare("UPDATE giocatori SET punti = 0 WHERE giocatore_id = ?");
         $stmt->bind_param("i", $this->giocatoreId);
