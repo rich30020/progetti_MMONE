@@ -3,7 +3,8 @@ session_start();
 include 'connessione.php';
 
 // Classe per la gestione del Caso
-class Caso {
+class Caso
+{
     private $conn;
     private $casoId;
     private $titolo;
@@ -12,13 +13,15 @@ class Caso {
     private $rispostaCorretta;
     private $descrizione;
 
-    public function __construct($conn, $casoId) {
+    public function __construct($conn, $casoId)
+    {
         $this->conn = $conn;
         $this->casoId = $casoId;
         $this->caricaDatiCaso();
     }
 
-    private function caricaDatiCaso() {
+    private function caricaDatiCaso()
+    {
         $sql = "SELECT titolo, dettagli, sospetti, risposta_corretta, descrizione FROM casi WHERE caso_id = ?";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param("i", $this->casoId);
@@ -32,31 +35,38 @@ class Caso {
         }
     }
 
-    public function getTitolo() {
+    public function getTitolo()
+    {
         return htmlspecialchars($this->titolo);
     }
 
-    public function getDettagli() {
+    public function getDettagli()
+    {
         return nl2br(htmlspecialchars($this->dettagli));
     }
 
-    public function getDescrizione() {
+    public function getDescrizione()
+    {
         return nl2br(htmlspecialchars($this->descrizione));
     }
 
-    public function getSospetti() {
+    public function getSospetti()
+    {
         return explode('|', $this->sospetti);
     }
 
-    public function getRispostaCorretta() {
+    public function getRispostaCorretta()
+    {
         return htmlspecialchars(trim($this->rispostaCorretta));
     }
 }
 
 // Classe per il form di invio della teoria
-class TeoriaForm {
-    public function mostraForm($casoId, $rispostaCorretta) {
-        ?>
+class TeoriaForm
+{
+    public function mostraForm($casoId, $rispostaCorretta)
+    {
+?>
         <form class="sospetti-form" action="invia_teoria.php" method="post">
             <h3>Inserisci il nome del sospetto:</h3>
             <input type="text" name="sospetto" required>
@@ -67,7 +77,7 @@ class TeoriaForm {
             <input type="hidden" name="risposta_corretta" value="<?php echo $rispostaCorretta; ?>">
             <input type="submit" value="Invia">
         </form>
-        <?php
+<?php
     }
 }
 
@@ -79,6 +89,7 @@ $caso = new Caso($conn, $casoId);
 
 <!DOCTYPE html>
 <html lang="it">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -223,6 +234,7 @@ $caso = new Caso($conn, $casoId);
                 opacity: 0;
                 transform: translateY(-10px);
             }
+
             100% {
                 opacity: 1;
                 transform: translateY(0);
@@ -230,9 +242,12 @@ $caso = new Caso($conn, $casoId);
         }
 
         @keyframes bounce {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0);
             }
+
             50% {
                 transform: translateY(-10px);
             }
@@ -267,6 +282,7 @@ $caso = new Caso($conn, $casoId);
         }
     </style>
 </head>
+
 <body>
     <div class="contenitore">
         <h2>Sherlock Holmes - Caso</h2>
@@ -276,26 +292,26 @@ $caso = new Caso($conn, $casoId);
         </form>
         <?php
         if ($caso->getTitolo() && $caso->getDettagli()) {
-            ?>
+        ?>
             <h2><?php echo $caso->getTitolo(); ?></h2>
             <p><?php echo $caso->getDettagli(); ?></p>
-            <p><strong>Descrizione Completa:</strong><br><?php 
-                echo $caso->getDescrizione() ? $caso->getDescrizione() : "Descrizione non disponibile"; 
-            ?></p>
+            <p><strong>Descrizione Completa:</strong><br><?php
+                                                            echo $caso->getDescrizione() ? $caso->getDescrizione() : "Descrizione non disponibile";
+                                                            ?></p>
             <h3>Sospetti:</h3>
             <div class="sospetti-form">
                 <?php
                 $sospetti = $caso->getSospetti();
                 foreach ($sospetti as $sospetto) {
-                    ?>
+                ?>
                     <div class="sospetto-item">
                         <?php echo htmlspecialchars(trim($sospetto)); ?>
                     </div>
-                    <?php
+                <?php
                 }
                 ?>
             </div>
-            <?php
+        <?php
             $teoriaForm = new TeoriaForm();
             $teoriaForm->mostraForm($casoId, $caso->getRispostaCorretta());
         } else {
@@ -306,4 +322,5 @@ $caso = new Caso($conn, $casoId);
         ?>
     </div>
 </body>
+
 </html>
