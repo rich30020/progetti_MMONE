@@ -71,7 +71,7 @@ $punti = $giocatore->getPunti();
 
         <!-- Form per resettare la sessione -->
         <form action="reset_sessione.php" method="post">
-            <input type="submit" value="Resetta Sessione">
+            <input type="submit" value="Resetta Gioco">
         </form>
 
         <?php
