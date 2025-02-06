@@ -1,6 +1,80 @@
 <?php
 session_start();
 include 'connessione.php';
+
+// Classe per la gestione del Caso
+class Caso {
+    private $conn;
+    private $casoId;
+    private $titolo;
+    private $dettagli;
+    private $sospetti;
+    private $rispostaCorretta;
+    private $descrizione;
+
+    public function __construct($conn, $casoId) {
+        $this->conn = $conn;
+        $this->casoId = $casoId;
+        $this->caricaDatiCaso();
+    }
+
+    private function caricaDatiCaso() {
+        $sql = "SELECT titolo, dettagli, sospetti, risposta_corretta, descrizione FROM casi WHERE caso_id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("i", $this->casoId);
+        $stmt->execute();
+        $stmt->bind_result($this->titolo, $this->dettagli, $this->sospetti, $this->rispostaCorretta, $this->descrizione);
+        if ($stmt->fetch()) {
+            $stmt->close();
+        } else {
+            $stmt->close();
+            $this->titolo = $this->dettagli = $this->sospetti = $this->rispostaCorretta = $this->descrizione = null;
+        }
+    }
+
+    public function getTitolo() {
+        return htmlspecialchars($this->titolo);
+    }
+
+    public function getDettagli() {
+        return nl2br(htmlspecialchars($this->dettagli));
+    }
+
+    public function getDescrizione() {
+        return nl2br(htmlspecialchars($this->descrizione));
+    }
+
+    public function getSospetti() {
+        return explode('|', $this->sospetti);
+    }
+
+    public function getRispostaCorretta() {
+        return htmlspecialchars(trim($this->rispostaCorretta));
+    }
+}
+
+// Classe per il form di invio della teoria
+class TeoriaForm {
+    public function mostraForm($casoId, $rispostaCorretta) {
+        ?>
+        <form class="sospetti-form" action="invia_teoria.php" method="post">
+            <h3>Inserisci il nome del sospetto:</h3>
+            <input type="text" name="sospetto" required>
+            <p class="hint">⚠ Attenzione: assicurati di scrivere il nome del sospetto esattamente come appare nel testo dei sospetti.</p>
+            <h3>La tua teoria:</h3>
+            <textarea name="teoria" required></textarea><br>
+            <input type="hidden" name="caso_id" value="<?php echo $casoId; ?>">
+            <input type="hidden" name="risposta_corretta" value="<?php echo $rispostaCorretta; ?>">
+            <input type="submit" value="Invia">
+        </form>
+        <?php
+    }
+}
+
+// Caricamento del caso
+$casoId = isset($_GET['caso_id']) ? intval($_GET['caso_id']) : 0;
+$caso = new Caso($conn, $casoId);
+
 ?>
 
 <!DOCTYPE html>
@@ -201,50 +275,32 @@ include 'connessione.php';
             <input type="submit" value="Resetta Sessione">
         </form>
         <?php
-        // Ottieni l'ID del caso dalla query string
-        $casoId = isset($_GET['caso_id']) ? intval($_GET['caso_id']) : 0;
-
-        // Query per recuperare i dati del caso
-        $sql = "SELECT titolo, dettagli, sospetti, risposta_corretta FROM casi WHERE caso_id = $casoId";
-        $result = $conn->query($sql);
-
-        // Se ci sono risultati, mostra i dettagli del caso
-        if ($result && $result->num_rows > 0) {
-            $row = $result->fetch_assoc();
+        if ($caso->getTitolo() && $caso->getDettagli()) {
             ?>
-            <h2><?php echo htmlspecialchars($row['titolo']); ?></h2>
-            <!-- nl2br = per andarea a capo -->
-            <p><?php echo nl2br(htmlspecialchars($row['dettagli'])); ?></p>
+            <h2><?php echo $caso->getTitolo(); ?></h2>
+            <p><?php echo $caso->getDettagli(); ?></p>
+            <p><strong>Descrizione Completa:</strong><br><?php 
+                echo $caso->getDescrizione() ? $caso->getDescrizione() : "Descrizione non disponibile"; 
+            ?></p>
             <h3>Sospetti:</h3>
             <div class="sospetti-form">
                 <?php
-                // Mostra i sospetti
-                $sospetti = explode('|', $row['sospetti']);
+                $sospetti = $caso->getSospetti();
                 foreach ($sospetti as $sospetto) {
-                    $sospetto = trim($sospetto);
                     ?>
                     <div class="sospetto-item">
-                        <?php echo htmlspecialchars($sospetto); ?>
+                        <?php echo htmlspecialchars(trim($sospetto)); ?>
                     </div>
                     <?php
                 }
                 ?>
             </div>
-            <form class="sospetti-form" action="invia_teoria.php" method="post">
-                <h3>Inserisci il nome del sospetto:</h3>
-                <input type="text" name="sospetto" required>
-                <p class="hint">⚠ Attenzione: assicurati di scrivere il nome del sospetto esattamente come appare nel testo dei sospetti. Esempi: La Governante, La signora Elizabeth, il socio in affari, il signor Miller, Un vicino di casa sospetto, L'assistente, il signor Clark.</p>
-                <h3>La tua teoria:</h3>
-                <textarea name="teoria" required></textarea><br>
-                <input type="hidden" name="caso_id" value="<?php echo $casoId; ?>">
-                <input type="hidden" name="risposta_corretta" value="<?php echo htmlspecialchars(trim($row['risposta_corretta'])); ?>">
-                <input type="submit" value="Invia">
-            </form>
             <?php
+            $teoriaForm = new TeoriaForm();
+            $teoriaForm->mostraForm($casoId, $caso->getRispostaCorretta());
         } else {
             echo "<p>Dettagli del caso non disponibili.</p>";
         }
-
 
         $conn->close();
         ?>

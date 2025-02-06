@@ -1,80 +1,101 @@
 <?php
+// Classe per gestire le operazioni relative ai giocatori
+class Giocatore {
+    private $conn;
+    private $giocatoreId;
 
-include 'connessione.php';
+    public function __construct($conn, $giocatoreId) {
+        $this->conn = $conn;
+        $this->giocatoreId = $giocatoreId;
+    }
 
-function aggiornaPunti($conn, $giocatoreId, $punti) {
-    $stmt = $conn->prepare("UPDATE giocatori SET punti = punti + ? WHERE giocatore_id = ?");
-    $stmt->bind_param("ii", $punti, $giocatoreId);
-    $stmt->execute();
-    $stmt->close();
+    // Metodo per aggiornare i punti del giocatore
+    public function aggiornaPunti($punti) {
+        $stmt = $this->conn->prepare("UPDATE giocatori SET punti = punti + ? WHERE giocatore_id = ?");
+        $stmt->bind_param("ii", $punti, $this->giocatoreId);
+        $stmt->execute();
+        $stmt->close();
+    }
+
+    // Metodo per ottenere i punti del giocatore
+    public function ottieniPunti() {
+        $stmt = $this->conn->prepare("SELECT punti FROM giocatori WHERE giocatore_id = ?");
+        $stmt->bind_param("i", $this->giocatoreId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+        $punti = $row['punti'];
+        $stmt->close();
+        return $punti;
+    }
+
+    // Metodo per resettare i punti del giocatore
+    public function resetPunti() {
+        $stmt = $this->conn->prepare("UPDATE giocatori SET punti = 0 WHERE giocatore_id = ?");
+        $stmt->bind_param("i", $this->giocatoreId);
+        $stmt->execute();
+        $stmt->close();
+    }
 }
 
-// Funzione per ottenere i punti del giocatore
-function ottieniPunti($conn, $giocatoreId) {
-    $stmt = $conn->prepare("SELECT punti FROM giocatori WHERE giocatore_id = ?");
-    $stmt->bind_param("i", $giocatoreId);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
-    $punti = $row['punti'];
-    $stmt->close();
-    return $punti;
+// Classe per gestire le risposte dei giocatori
+class RispostaGiocatore {
+    private $conn;
+
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
+
+    // Metodo per inserire una risposta del giocatore nel database
+    public function inserisciRisposta($casoId, $teoria, $corretto) {
+        $stmt = $this->conn->prepare("INSERT INTO risposte_giocatori (caso_id, teoria_giocatore, corretto) VALUES (?, ?, ?)");
+        $stmt->bind_param("isi", $casoId, $teoria, $corretto);
+        return $stmt->execute();
+    }
 }
 
-// Funzione per resettare i punti del giocatore
-function resetPunti($conn, $giocatoreId) {
-    $stmt = $conn->prepare("UPDATE giocatori SET punti = 0 WHERE giocatore_id = ?");
-    $stmt->bind_param("i", $giocatoreId);
-    $stmt->execute();
-    $stmt->close();
-}
-
-
+// Gestione della richiesta POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     session_start();
+    include 'connessione.php';
 
+    $giocatore = new Giocatore($conn, 1);
+    $rispostaGiocatore = new RispostaGiocatore($conn);
 
     $casoId = intval($_POST['caso_id']);
     $teoria = trim($_POST['teoria']);
     $sospettoSelezionato = trim($_POST['sospetto']);
     $sospettoCorretto = trim($_POST['risposta_corretta']);
-    $giocatoreId = 1; 
-
     $corretto = (strcasecmp($sospettoSelezionato, $sospettoCorretto) === 0) ? 1 : 0;
 
-    // Inserisci la risposta nel database
-    $stmt = $conn->prepare("INSERT INTO risposte_giocatori (caso_id, teoria_giocatore, corretto) VALUES (?, ?, ?)");
-    $stmt->bind_param("isi", $casoId, $teoria, $corretto);
-    if ($stmt->execute()) {
+    // Inserire la risposta nel database
+    if ($rispostaGiocatore->inserisciRisposta($casoId, $teoria, $corretto)) {
         if ($corretto) {
-            // Se la risposta è corretta, aggiungi 20 punti
-            aggiornaPunti($conn, $giocatoreId, 20); 
-            $_SESSION['punti'] += 20; // Aggiorna i punti nella sessione
+            // Aggiungi punti se la risposta è corretta
+            $giocatore->aggiornaPunti(20);
+            $_SESSION['punti'] += 20;
 
             // Verifica se il giocatore ha completato l'ultimo caso
             $ultimoCaso = 5;
             if ($casoId == $ultimoCaso) {
-                resetPunti($conn, $giocatoreId); 
-                header("Location: vittoria.php"); 
+                $giocatore->resetPunti(); // Resetta i punti se ha completato l'ultimo caso
+                header("Location: vittoria.php");
                 exit();
             } else {
                 header("Location: vittoria.php");
                 exit();
             }
         } else {
-            // Se la risposta è sbagliata, vai alla pagina di sconfitta
+            // Vai alla pagina di sconfitta se la risposta è sbagliata
             header("Location: sconfitta.php");
             exit();
         }
     } else {
-
         echo "<p>Errore: " . $stmt->error . "</p>";
     }
 
-    $stmt->close();
     $conn->close();
 } else {
-
     header('Location: caso.php');
     exit();
 }
