@@ -1,0 +1,154 @@
+/* Impostazioni globali */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    display: grid;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* Stile principale */
+main {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9b9b9b;
+    line-height: 3.8;
+    font-size: 80px;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 50px;
+    color: #fff;
+    background-color: #25242a;
+}
+
+.footer > * {
+    flex: 1 100%;
+}
+
+.left-area {
+    margin-right: -12em;
+}
+
+.footer-bottom img {
+    width: 15%;
+}
+
+/* Titoli */
+h2 {
+    font-size: 17px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: darkorange;
+    letter-spacing: 3px;
+}
+
+/* Liste nel footer */
+.footer ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer li {
+    line-height: 2em;
+}
+
+.footer a {
+    text-decoration: none;
+}
+
+/* Area destra del footer */
+.right-area {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.right-area > * {
+    flex: 1 50%;
+    margin-right: 1.25em;
+}
+
+.box a {
+    color: #999;
+}
+
+/* Footer bottom */
+.footer-bottom {
+    text-align: center;
+    color: #999;
+    padding-top: 50px;
+}
+
+/* Testo nella sezione sinistra */
+.left-area p {
+    padding-right: 20%;
+    color: #999;
+}
+
+/* Social */
+.socials {
+    margin-top: 2.2em;
+}
+
+.socials a {
+    background: darkorange;
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    margin-right: 10px;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 50%;
+}
+
+.socials a i {
+    color: #e7f2f4;
+    font-size: 20px;
+}
+
+/* Bottoni */
+.btn {
+    border: none;
+    background: darkorange;
+    color: #fff;
+    padding: 10px 30px;
+    cursor: pointer;
+}
+
+/* Box di ricerca */
+.search-box input {
+    height: 36px;
+}
+
+/* Responsività */
+@media screen and (min-height: 660px) {
+    .right-area > * {
+        flex: 1;
+    }
+    .left-area {
+        flex: 1 0px;
+    }
+    .right-area {
+        flex: 2 0px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .footer {
+        padding: 15px;
+    }
+    main {
+        font-size: 55px;
+    }
+}
