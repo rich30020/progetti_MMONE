@@ -5,16 +5,72 @@ if (!isset($_SESSION['nome'])) {
     exit();
 }
 
-// includo la connessione al db
+// Includo la connessione al db 
 include 'connessione.php';
 
-$nome = $_SESSION['nome'];
-$sql = "SELECT * FROM utenti WHERE nome='$nome'";
-$result = $conn->query($sql);
-$utente = $result->fetch_assoc();
+class Database {
+    private static $instance = null;
+    private $conn;
 
-$sql = "SELECT * FROM escursioni WHERE user_id=" . $utente['id'];
-$escursioni = $conn->query($sql);
+    private function __construct() {
+        $db = new ConnessioneDB();
+        $this->conn = $db->conn;
+    }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->conn;
+    }
+}
+
+class Utente {
+    private $conn;
+    private $nome;
+
+    public function __construct($conn, $nome) {
+        $this->conn = $conn;
+        $this->nome = $nome;
+    }
+
+    public function getUserInfo() {
+        $sql = "SELECT * FROM utenti WHERE nome=?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param("s", $this->nome);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
+    }
+}
+
+class Escursione {
+    private $conn;
+    
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
+
+    public function getAllEscursioni() {
+        $sql = "SELECT escursioni.*, utenti.nome AS nome_utente, 
+                escursioni.mi_piace AS numero_mi_piace,
+                escursioni.non_mi_piace AS numero_non_mi_piace
+                FROM escursioni 
+                JOIN utenti ON escursioni.user_id = utenti.id";
+        return $this->conn->query($sql);
+    }
+}
+
+$dbInstance = Database::getInstance();
+$conn = $dbInstance->getConnection();
+$utenteObj = new Utente($conn, $_SESSION['nome']);
+$utente = $utenteObj->getUserInfo();
+$escursioneObj = new Escursione($conn);
+$escursioni = $escursioneObj->getAllEscursioni();
 ?>
 <!DOCTYPE html>
 <html lang="it">

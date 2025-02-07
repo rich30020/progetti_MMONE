@@ -1,12 +1,19 @@
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "escursioni_db";
+class ConnessioneDB {
+    private $servername = "localhost";
+    private $username = "root";
+    private $password = "";
+    private $dbname = "escursioni_db";
+    public $conn;
 
-$conn = new mysqli($servername, $username, $password, $dbname);
+    public function __construct() {
+        $this->conn = new mysqli($this->servername, $this->username, $this->password, $this->dbname);
 
-if ($conn->connect_error) {
-    die("Connessione fallita: " . $conn->connect_error);
+        if ($this->conn->connect_error) {
+            die("Connessione fallita: " . $this->conn->connect_error);
+        }
+    }
 }
+
+$db = new ConnessioneDB();
 ?>

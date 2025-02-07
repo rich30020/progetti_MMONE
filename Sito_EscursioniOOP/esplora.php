@@ -5,18 +5,50 @@ if (!isset($_SESSION['nome'])) {
     exit();
 }
 
-// includo la connessione al db
+// Includo la connessione al db 
 include 'connessione.php';
 
-// ottengo tutte le escursioni
-$sql = "
-    SELECT escursioni.*, utenti.nome AS nome_utente,
-           escursioni.mi_piace AS numero_mi_piace,
-           escursioni.non_mi_piace AS numero_non_mi_piace
-    FROM escursioni
-    JOIN utenti ON escursioni.user_id = utenti.id
-";
-$escursioni = $conn->query($sql);
+class Database {
+    private static $instance = null;
+    private $conn;
+
+    private function __construct() {
+        $db = new ConnessioneDB();
+        $this->conn = $db->conn;
+    }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->conn;
+    }
+}
+
+class Esplora {
+    private $conn;
+
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
+
+    public function getEscursioni() {
+        $sql = "SELECT escursioni.*, utenti.nome AS nome_utente, 
+                escursioni.mi_piace AS numero_mi_piace,
+                escursioni.non_mi_piace AS numero_non_mi_piace
+                FROM escursioni 
+                JOIN utenti ON escursioni.user_id = utenti.id";
+        return $this->conn->query($sql);
+    }
+}
+
+$dbInstance = Database::getInstance();
+$esploraObj = new Esplora($dbInstance->getConnection());
+$escursioni = $esploraObj->getEscursioni();
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -31,15 +63,15 @@ $escursioni = $conn->query($sql);
     <div class="content">
         <h1>Esplora Escursioni</h1>
         <div class="escursioni-grid">
-            <?php while($row = $escursioni->fetch_assoc()): ?>
+            <?php while ($row = $escursioni->fetch_assoc()): ?>
                 <div class="escursione-item">
-                    <h3><?php echo $row['sentiero']; ?> <small>by <?php echo $row['nome_utente']; ?></small></h3>
-                    <p>Durata: <?php echo $row['durata']; ?></p>
-                    <p>Difficoltà: <?php echo $row['difficolta']; ?></p>
-                    <p align="justify">Commenti: <?php echo $row['commenti']; ?></p>
-                    <p>Punti: <?php echo $row['punti']; ?></p>
-                    <?php if ($row['foto']): ?>
-                        <img src="uploads/<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
+                    <h3><?php echo htmlspecialchars($row['sentiero']); ?> <small>by <?php echo htmlspecialchars($row['nome_utente']); ?></small></h3>
+                    <p>Durata: <?php echo htmlspecialchars($row['durata']); ?></p>
+                    <p>Difficoltà: <?php echo htmlspecialchars($row['difficolta']); ?></p>
+                    <p align="justify">Commenti: <?php echo htmlspecialchars($row['commenti']); ?></p>
+                    <p>Punti: <?php echo htmlspecialchars($row['punti']); ?></p>
+                    <?php if (!empty($row['foto'])): ?>
+                        <img src="uploads/<?php echo htmlspecialchars($row['foto']); ?>" alt="<?php echo htmlspecialchars($row['sentiero']); ?>" style="max-width:200px;">
                     <?php endif; ?>
                     <div class="interazioni">
                         <form method="post" action="aggiungi_commento.php">
@@ -49,11 +81,11 @@ $escursioni = $conn->query($sql);
                         </form>
                         <form method="post" action="aggiungi_like.php">
                             <input type="hidden" name="escursione_id" value="<?php echo $row['id']; ?>">
-                            <button type="submit">&#128077; Mi Piace (<?php echo $row['numero_mi_piace']; ?>)</button>
+                            <button type="submit">&#128077; Mi Piace (<?php echo htmlspecialchars($row['numero_mi_piace']); ?>)</button>
                         </form>
                         <form method="post" action="aggiungi_dislike.php">
                             <input type="hidden" name="escursione_id" value="<?php echo $row['id']; ?>">
-                            <button type="submit">&#128078; Non Mi Piace (<?php echo $row['numero_non_mi_piace']; ?>)</button>
+                            <button type="submit">&#128078; Non Mi Piace (<?php echo htmlspecialchars($row['numero_non_mi_piace']); ?>)</button>
                         </form>
                     </div>
                 </div>
@@ -62,4 +94,4 @@ $escursioni = $conn->query($sql);
     </div>
 </body>
 </html>
-<?php $conn->close(); ?>
+<?php $dbInstance->getConnection()->close(); ?>

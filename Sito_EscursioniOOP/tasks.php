@@ -8,8 +8,49 @@ if (!isset($_SESSION['nome'])) {
 // Includo la connessione al db 
 include 'connessione.php';
 
-$sql = "SELECT * FROM percorsi_eccezionali";
-$percorsi = $conn->query($sql);
+class Database {
+    private static $instance = null;
+    private $conn;
+
+    private function __construct() {
+        $db = new ConnessioneDB();
+        $this->conn = $db->conn;
+    }
+
+    public static function getInstance() {
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+        return self::$instance;
+    }
+
+    public function getConnection() {
+        return $this->conn;
+    }
+}
+
+class PercorsiEccezionali {
+    private $conn;
+
+    public function __construct($conn) {
+        $this->conn = $conn;
+    }
+
+    public function getPercorsi() {
+        $sql = "SELECT * FROM percorsi_eccezionali";
+        $result = $this->conn->query($sql);
+
+        if (!$result) {
+            die("Errore nella query: " . $this->conn->error);
+        }
+
+        return $result;
+    }
+}
+
+$dbInstance = Database::getInstance();
+$percorsiObj = new PercorsiEccezionali($dbInstance->getConnection());
+$percorsi = $percorsiObj->getPercorsi();
 ?>
 <!DOCTYPE html>
 <html lang="it">
@@ -24,14 +65,14 @@ $percorsi = $conn->query($sql);
     <div class="content">
         <h1>Sentieri Proposti</h1>
         <div class="task-grid">
-            <?php while($row = $percorsi->fetch_assoc()): ?>
+            <?php while ($row = $percorsi->fetch_assoc()): ?>
                 <div class="task-item">
-                    <h3><?php echo $row['sentiero']; ?></h3>
-                    <p>Durata: <?php echo $row['durata']; ?></p>
-                    <p>Difficoltà: <?php echo $row['difficolta']; ?></p>
-                    <p align="justify">Commenti: <?php echo $row['commenti']; ?></p>
-                    <?php if ($row['foto']): ?>
-                        <img src="<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
+                    <h3><?php echo htmlspecialchars($row['sentiero']); ?></h3>
+                    <p>Durata: <?php echo htmlspecialchars($row['durata']); ?></p>
+                    <p>Difficoltà: <?php echo htmlspecialchars($row['difficolta']); ?></p>
+                    <p align="justify">Commenti: <?php echo htmlspecialchars($row['commenti']); ?></p>
+                    <?php if (!empty($row['foto'])): ?>
+                        <img src="<?php echo htmlspecialchars($row['foto']); ?>" alt="<?php echo htmlspecialchars($row['sentiero']); ?>" style="max-width:200px;">
                     <?php endif; ?>
                 </div>
             <?php endwhile; ?>
@@ -39,4 +80,4 @@ $percorsi = $conn->query($sql);
     </div>
 </body>
 </html>
-<?php $conn->close(); ?>
+<?php $dbInstance->getConnection()->close(); ?>
