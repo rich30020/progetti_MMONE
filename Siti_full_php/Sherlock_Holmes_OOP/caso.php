@@ -37,17 +37,17 @@ class Caso
 
     public function getTitolo()
     {
-        return htmlspecialchars($this->titolo);
+        return $this->titolo;
     }
 
     public function getDettagli()
     {
-        return nl2br(htmlspecialchars($this->dettagli));
+        return $this->dettagli;
     }
 
     public function getDescrizione()
     {
-        return nl2br(htmlspecialchars($this->descrizione));
+        return $this->descrizione;
     }
 
     public function getSospetti()
@@ -57,7 +57,7 @@ class Caso
 
     public function getRispostaCorretta()
     {
-        return htmlspecialchars(trim($this->rispostaCorretta));
+        return $this->rispostaCorretta;
     }
 }
 

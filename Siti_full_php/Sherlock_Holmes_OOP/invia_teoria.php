@@ -1,5 +1,5 @@
 <?php
-// Classe per gestire le operazioni relative ai giocatori
+// Per gestire le operazioni dei giocatori
 class Giocatore {
     private $conn;
     private $giocatoreId;
@@ -37,7 +37,7 @@ class Giocatore {
     }
 }
 
-// Classe per gestire le risposte dei giocatori
+// Per gestire le risposte dei giocatori
 class RispostaGiocatore {
     private $conn;
 
@@ -45,7 +45,7 @@ class RispostaGiocatore {
         $this->conn = $conn;
     }
 
-    // Metodo per inserire una risposta del giocatore nel database
+    // Funzione per inserire la rispsta del giocatore nel db
     public function inserisciRisposta($casoId, $teoria, $corretto) {
         $stmt = $this->conn->prepare("INSERT INTO risposte_giocatori (caso_id, teoria_giocatore, corretto) VALUES (?, ?, ?)");
         $stmt->bind_param("isi", $casoId, $teoria, $corretto);
@@ -53,7 +53,6 @@ class RispostaGiocatore {
     }
 }
 
-// Gestione della richiesta POST
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     session_start();
     include 'connessione.php';
@@ -85,7 +84,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit();
             }
         } else {
-            // Vai alla pagina di sconfitta se la risposta è sbagliata
             header("Location: sconfitta.php");
             exit();
         }

@@ -1,5 +1,5 @@
 <?php
-// Classe per gestire le operazioni relative ai giocatori
+// Per gestire le operazioni dei giocatori
 class Giocatore {
     private $conn;
     private $giocatoreId;
@@ -9,7 +9,7 @@ class Giocatore {
         $this->giocatoreId = $giocatoreId;
     }
 
-    // Metodo per resettare i punti del giocatore
+    // Funzione per gestire il reset dei punti
     public function resetPunti() {
         $stmt = $this->conn->prepare("UPDATE giocatori SET punti = 0 WHERE giocatore_id = ?");
         $stmt->bind_param("i", $this->giocatoreId);

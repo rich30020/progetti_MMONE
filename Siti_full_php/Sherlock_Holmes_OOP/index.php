@@ -32,13 +32,13 @@ class Caso {
         $this->conn = $conn;
     }
 
-    // Metodo per ottenere tutti i casi
+    
     public function getCasi() {
         $sql = "SELECT caso_id, titolo, descrizione FROM casi ORDER BY caso_id ASC";
         return $this->conn->query($sql);
     }
 
-    // Metodo per calcolare i punti richiesti per ogni caso
+    // Per calcolare i punti richiesti per ogni caso
     public function calcolaPuntiRichiesti($casoId) {
         return ($casoId - 1) * 20;
     }
