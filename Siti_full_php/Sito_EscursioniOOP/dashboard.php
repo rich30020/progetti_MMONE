@@ -89,7 +89,7 @@ $escursioni = $escursioneObj->getAllEscursioni();
             <p>Punti escursionistici: <?php echo $utente['punti_escursionistici']; ?></p>
         </div>
         <div class="user-escursioni">
-            <h2>Le tue escursioni:</h2>
+            <h2>Le Vostre Escursioni:</h2>
             <ul>
                 <?php while($row = $escursioni->fetch_assoc()): ?>
                     <li>
@@ -99,7 +99,11 @@ $escursioni = $escursioneObj->getAllEscursioni();
                         <p>Commenti: <?php echo $row['commenti']; ?></p>
                         <p>Punti: <?php echo $row['punti']; ?></p>
                         <?php if ($row['foto']): ?>
-                            <img id="foto_iniziali" src="uploads/<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
+                            <img id="foto_iniziali" src="uploads/<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px; padding-bottom: 5px">
+                            <br>
+                            <a href="esplora.php?id=<?php echo $row['id'];?>">
+                                <button style="border-radius: 10px; background-color: #216ce7; padding: 10px 20px; color: #fff; cursor: pointer; font-size: 1rem; font-weight: 600; transition: background-color 0.3s ease-in-out; border: none;">Esplora</button>
+                            </a>
                         <?php endif; ?>
                     </li>
                 <?php endwhile; ?>
