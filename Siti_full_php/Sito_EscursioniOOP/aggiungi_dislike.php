@@ -38,7 +38,7 @@ class Voto {
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $escursione_id = $_POST['escursione_id'];
-    $voto = new Voto($db->conn, $escursione_id); // Use $db->conn to get the connection
+    $voto = new Voto($db->conn, $escursione_id); // Usa $db->conn per stabilire la connessione
 
     if ($voto->aggiungiDislike()) {
         header("Location: esplora.php");
