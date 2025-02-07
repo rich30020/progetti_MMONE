@@ -86,7 +86,7 @@ $escursioni = $esploraObj->getEscursioni();
                         <img src="uploads/<?php echo $row['foto']; ?>" alt="<?php echo $row['sentiero']; ?>" style="max-width:200px;">
                     <?php endif; ?>
 
-                    <!-- Sezione Commenti -->
+                    <!-- Commenti -->
                     <div class="commenti">
                         <h4>Commenti:</h4>
                         <?php 
