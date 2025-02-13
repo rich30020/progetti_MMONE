@@ -7,9 +7,8 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="dashboard.php">Dashboard</a>
-        <a href="esplora.php">Esplora</a>
-        <a href="tasks.php">Task</a>
+        <a href="../index.php">Dashboard</a>
+        <a href="view/esplora.php">Esplora</a>
         <a href="logout.php">Logout</a>
     </nav>
 </body>
