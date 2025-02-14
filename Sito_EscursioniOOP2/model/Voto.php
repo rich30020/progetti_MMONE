@@ -7,7 +7,7 @@ class Voto {
 
     public function __construct() {
         // Ottieni la connessione al database tramite mysqli
-        $this->db = ConnessioneDB::getInstance();
+        $this->db = ConnessioneDB::getInstance()->getConnessione(); // Ensure proper retrieval of the connection instance
     }
 
     // Aggiungi un voto (Mi Piace o Non Mi Piace)
@@ -78,21 +78,13 @@ class Voto {
     }
 
     // Ottieni il conteggio dei Mi Piace e Non Mi Piace per un'escursione
-    public function getLikeDislikeCount($escursione_id, $voto) {
-        $query = "SELECT COUNT(*) as count FROM voti WHERE escursione_id = ? AND voto = ?";
+    public function getLikeDislikeCount($commento_id, $voto) {
+        $query = "SELECT COUNT(*) as count FROM voti WHERE commento_id = ? AND voto = ?";
 
-        // Prepara la query
         if ($stmt = $this->db->prepare($query)) {
-            // Associa i parametri
-            $stmt->bind_param("ii", $escursione_id, $voto);
-
-            // Esegui la query
+            $stmt->bind_param("ii", $commento_id, $voto);
             $stmt->execute();
-
-            // Ottieni i risultati
             $result = $stmt->get_result();
-
-            // Restituisci il conteggio dei Mi Piace o Non Mi Piace
             $row = $result->fetch_assoc();
             return $row['count'];
         } else {

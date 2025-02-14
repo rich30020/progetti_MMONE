@@ -7,13 +7,18 @@ class Escursione {
     private $conn;
 
     public function __construct() {
-        $this->conn = ConnessioneDB::getInstance(); // Ottieni la connessione singleton
+        $this->conn = ConnessioneDB::getInstance()->getConnessione(); // Ottieni la connessione singleton
     }
 
     // Ottieni tutte le escursioni
     public function getAllEscursioni() {
         $query = "SELECT * FROM escursioni";
         $result = $this->conn->query($query);
+
+        if ($result === false) {
+            error_log("Errore nella query: " . $this->conn->error);
+            return [];
+        }
 
         if ($result->num_rows > 0) {
             $escursioni = [];
@@ -30,6 +35,12 @@ class Escursione {
     public function getEscursioneById($id) {
         $query = "SELECT * FROM escursioni WHERE id = ?";
         $stmt = $this->conn->prepare($query);
+
+        if ($stmt === false) {
+            error_log("Errore nella preparazione della query: " . $this->conn->error);
+            return null;
+        }
+
         $stmt->bind_param("i", $id);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -45,8 +56,13 @@ class Escursione {
     public function insertEscursione($userId, $sentiero, $durata, $difficolta, $punti, $foto) {
         $query = "INSERT INTO escursioni (user_id, sentiero, durata, difficolta, punti, foto) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);
-        $stmt->bind_param("isiiis", $userId, $sentiero, $durata, $difficolta, $punti, $foto);
 
+        if ($stmt === false) {
+            error_log("Errore nella preparazione della query: " . $this->conn->error);
+            return false;
+        }
+
+        $stmt->bind_param("isiiis", $userId, $sentiero, $durata, $difficolta, $punti, $foto);
         return $stmt->execute();
     }
 }

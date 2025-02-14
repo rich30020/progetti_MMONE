@@ -1,3 +1,4 @@
+/* Importazione font */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Poppins:wght@100;200;300;400;500;600;700;800;900&family=Spectral:wght@200;300;400;500;600;700;800&display=swap');
 
 * {
@@ -15,8 +16,10 @@ body {
     align-items: center;
     min-height: 100vh;
     animation: fadeIn 1s ease-in-out;
+    color: #2e3444;
 }
 
+/* Navbar */
 .navbar {
     width: 100%;
     background-color: #216ce7;
@@ -39,6 +42,7 @@ body {
     transform: scale(1.1);
 }
 
+/* Contenuto principale */
 .content {
     width: 100%;
     max-width: 1200px;
@@ -46,29 +50,37 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    padding: 20px;
 }
 
+/* Titolo */
 h1 {
     margin-bottom: 20px;
     color: #2e3444;
     text-align: center;
+    font-size: 2rem;
     animation: fadeIn 2s;
 }
 
+/* Griglia delle escursioni con Flexbox */
 .escursioni-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    display: flex; /* Usa Flexbox per disporre gli elementi in orizzontale */
+    flex-wrap: wrap; /* Gli elementi vanno a capo se non c'è abbastanza spazio */
+    gap: 20px; /* Spazio tra gli elementi */
+    justify-content: flex-start; /* Allinea gli elementi a sinistra */
     margin-top: 30px;
+    width: 100%;
 }
 
 .escursione-item {
-    background-color: white;
+    flex: 1 1 calc(33.333% - 20px); /* Ogni escursione occupa un terzo della larghezza del contenitore, con gap */
+    box-sizing: border-box; /* Evita che padding e margini influenzino la larghezza */
     padding: 20px;
+    background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    animation: fadeIn 0.5s ease-out;
+    margin-bottom: 20px; /* Spazio tra le righe */
 }
 
 .escursione-item:hover {
@@ -79,17 +91,23 @@ h1 {
 .escursione-item h3 {
     font-size: 1.5rem;
     margin-bottom: 10px;
+    color: #216ce7;
+    font-weight: 600;
 }
 
 .escursione-item p {
     font-size: 1rem;
     margin-bottom: 10px;
+    color: #555;
 }
 
+/* Immagine delle escursioni */
 .escursione-item img {
     border-radius: 10px;
     margin-top: 10px;
     transition: opacity 0.3s ease;
+    max-width: 100%;
+    height: auto;
 }
 
 .escursione-item img:hover {
@@ -99,6 +117,9 @@ h1 {
 /* Interazioni */
 .interazioni form {
     margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 button {
@@ -109,6 +130,8 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 10px;
 }
 
 button:hover {
@@ -161,3 +184,79 @@ form button[type="submit"] {
     }
 }
 
+/* Media Queries per dispositivi mobili */
+@media (max-width: 768px) {
+    .escursione-item {
+        flex: 1 1 calc(50% - 20px); /* Su schermi più piccoli, ogni escursione occupa metà della larghezza */
+    }
+}
+
+@media (max-width: 480px) {
+    .escursione-item {
+        flex: 1 1 100%; /* Su schermi molto piccoli, ogni escursione occupa tutta la larghezza */
+    }
+}
+/* Stili per le immagini delle escursioni */
+.escursione-img {
+    border-radius: 10px;
+    margin-top: 10px;
+    max-width: 100%;
+    height: auto;
+}
+
+/* Stili per il form del commento */
+.comment-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.comment-form button {
+    padding: 10px;
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comment-form button:hover {
+    background-color: #3f4d9c;
+}
+
+/* Stili per i commenti */
+.commento {
+    background-color: #e3f2fd;
+    border-left: 5px solid #1e88e5;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 8px;
+}
+
+/* Stili per i pulsanti Mi Piace e Non Mi Piace */
+.like-dislike-buttons form {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.like-dislike-buttons button {
+    background-color: #5c6bc0;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.like-dislike-buttons button:hover {
+    background-color: #3f4d9c;
+}

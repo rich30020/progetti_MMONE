@@ -3,6 +3,13 @@ require_once __DIR__ . '/../Model/Voto.php';
 
 class VotoController {
 
+    private $votoModel;
+
+    // Costruttore per istanziare il modello Voto
+    public function __construct() {
+        $this->votoModel = new Voto();
+    }
+
     // Metodo per aggiungere un voto (Mi Piace o Non Mi Piace) a un commento
     public function aggiungiVoto($user_id, $commento_id, $voto, $escursione_id) {
         try {
@@ -12,22 +19,23 @@ class VotoController {
             }
 
             // Verifica che il voto sia valido (1 per Mi Piace, -1 per Non Mi Piace)
-            if ($voto != 1 && $voto != -1) {
+            if ($voto !== 1 && $voto !== -1) {
                 throw new Exception("Il valore del voto deve essere 1 (Mi Piace) o -1 (Non Mi Piace).");
             }
 
-            // Crea un'istanza del modello Voto
-            $votoModel = new Voto();
-            
             // Aggiungi il voto tramite il modello
-            $votoModel->aggiungiVoto($user_id, $commento_id, $voto, $escursione_id);
+            $result = $this->votoModel->aggiungiVoto($user_id, $commento_id, $voto, $escursione_id);
+
+            if (!$result) {
+                throw new Exception("Errore nell'aggiungere il voto al commento.");
+            }
+
+            return true;
 
         } catch (Exception $e) {
             error_log("Errore nell'aggiungere il voto: " . $e->getMessage());
             return false;
         }
-
-        return true;  // Se non ci sono errori, ritorna true per indicare il successo
     }
 
     // Metodo per ottenere i voti (Mi Piace, Non Mi Piace) per un commento
@@ -37,13 +45,11 @@ class VotoController {
                 throw new Exception("ID del commento non valido.");
             }
 
-            // Crea un'istanza del modello Voto
-            $votoModel = new Voto();
-            
             // Ottieni i voti per il commento dal modello
-            $voti = $votoModel->getVotiPerCommento($commento_id);
+            $voti = $this->votoModel->getVotiPerCommento($commento_id);
 
-            return $voti;
+            // Se non ci sono voti, ritorna un array vuoto
+            return $voti ? $voti : [];
 
         } catch (Exception $e) {
             error_log("Errore nel recupero dei voti: " . $e->getMessage());
@@ -58,12 +64,9 @@ class VotoController {
                 throw new Exception("ID dell'escursione non valido.");
             }
 
-            // Crea un'istanza del modello Voto
-            $votoModel = new Voto();
-            
             // Ottieni il conteggio dei "Mi Piace" (tipo 1) e dei "Non Mi Piace" (tipo -1)
-            $likeCount = $votoModel->getLikeDislikeCount($escursione_id, 1);  // Mi Piace
-            $dislikeCount = $votoModel->getLikeDislikeCount($escursione_id, -1);  // Non Mi Piace
+            $likeCount = $this->votoModel->getLikeDislikeCount($escursione_id, 1);  // Mi Piace
+            $dislikeCount = $this->votoModel->getLikeDislikeCount($escursione_id, -1);  // Non Mi Piace
 
             return [
                 'like' => $likeCount,

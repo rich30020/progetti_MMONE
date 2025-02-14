@@ -2,19 +2,19 @@
 require_once __DIR__ . '/../Model/Utente.php';
 
 class RegisterController {
-
     public function register($nome, $email, $password, $eta, $livello_esperienza) {
         try {
-            // Crea un'istanza del modello Utente
             $utenteModel = new Utente();
 
-            // Verifica se l'email è già registrata
+            // Controlla se l'email è già registrata
             if ($utenteModel->emailEsistente($email)) {
                 return "Questa email è già registrata!";
             }
 
+            // Hash della password
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+
             // Crea un nuovo utente
-            $hashedPassword = password_hash($password, PASSWORD_BCRYPT); // Hash della password
             $utenteModel->creaUtente($nome, $email, $hashedPassword, $eta, $livello_esperienza);
             return "Registrazione riuscita!";
         } catch (Exception $e) {
