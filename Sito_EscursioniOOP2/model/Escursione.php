@@ -1,45 +1,51 @@
 <?php
-require_once __DIR__ . '/../Model/ConnessioneDB.php';
+
+require_once __DIR__ . '/ConnessioneDB.php';
 
 class Escursione {
 
-    private $db;
+    private $conn;
 
     public function __construct() {
-        $this->db = ConnessioneDB::getInstance(); // Ottieni la connessione dal Singleton
+        $this->conn = ConnessioneDB::getInstance(); // Ottieni la connessione singleton
     }
 
-    // Funzione per recuperare tutte le escursioni
+    // Ottieni tutte le escursioni
     public function getAllEscursioni() {
         $query = "SELECT * FROM escursioni";
-        $stmt = $this->db->query($query);  // Usa PDO per eseguire la query
+        $result = $this->conn->query($query);
 
-        $escursioni = $stmt->fetchAll(PDO::FETCH_ASSOC);  // Ottieni tutti i risultati
-        return $escursioni;
+        if ($result->num_rows > 0) {
+            $escursioni = [];
+            while ($row = $result->fetch_assoc()) {
+                $escursioni[] = $row;
+            }
+            return $escursioni;
+        } else {
+            return [];
+        }
     }
 
-    // Funzione per recuperare un'escursione per ID
+    // Ottieni l'escursione per ID
     public function getEscursioneById($id) {
-        $query = "SELECT * FROM escursioni WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $query = "SELECT * FROM escursioni WHERE id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
+        $result = $stmt->get_result();
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();
+        } else {
+            return null;
+        }
     }
 
-    // Funzione per inserire una nuova escursione
+    // Aggiungi una nuova escursione
     public function insertEscursione($userId, $sentiero, $durata, $difficolta, $punti, $foto) {
-        $query = "INSERT INTO escursioni (user_id, sentiero, durata, difficolta, punti, foto) 
-                  VALUES (:user_id, :sentiero, :durata, :difficolta, :punti, :foto)";
-        $stmt = $this->db->prepare($query);
-
-        $stmt->bindParam(':user_id', $userId, PDO::PARAM_INT);
-        $stmt->bindParam(':sentiero', $sentiero, PDO::PARAM_STR);
-        $stmt->bindParam(':durata', $durata, PDO::PARAM_INT);
-        $stmt->bindParam(':difficolta', $difficolta, PDO::PARAM_STR);
-        $stmt->bindParam(':punti', $punti, PDO::PARAM_INT);
-        $stmt->bindParam(':foto', $foto, PDO::PARAM_STR);
+        $query = "INSERT INTO escursioni (user_id, sentiero, durata, difficolta, punti, foto) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $this->conn->prepare($query);
+        $stmt->bind_param("isiiis", $userId, $sentiero, $durata, $difficolta, $punti, $foto);
 
         return $stmt->execute();
     }

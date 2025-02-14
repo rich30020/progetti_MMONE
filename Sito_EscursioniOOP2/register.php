@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/Controller/registerController.php';
+require_once __DIR__ . '/Controller/RegisterController.php'; // Corretto il nome del controller
 
 $errore = '';
 
@@ -11,13 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $livello_esperienza = $_POST['livello_esperienza'];
 
     $registerController = new RegisterController();
-    $successo = $registerController->register($nome, $email, $password, $eta, $livello_esperienza);
-
-    if ($successo === "Registrazione riuscita!") {
+    $errore = $registerController->register($nome, $email, $password, $eta, $livello_esperienza);
+    
+    // Se la registrazione è riuscita, reindirizza al login
+    if ($errore === "Registrazione riuscita!") {
         header('Location: login.php');
         exit();
-    } else {
-        $errore = $successo;
     }
 }
 ?>
@@ -27,35 +26,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/style.css">
-    <title>Registrazione</title>
+    <link href="https://unpkg.com/boxicons@2.1.4/cc/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Registrati</title>
 </head>
 <body>
-
-    <h1>Registrazione</h1>
-
-    <?php if ($errore): ?>
-        <p style="color: red;"><?php echo $errore; ?></p>
-    <?php endif; ?>
-
-    <form method="POST">
-        <label>Nome:</label>
-        <input type="text" name="nome" required>
-
-        <label>Email:</label>
-        <input type="email" name="email" required>
-
-        <label>Password:</label>
-        <input type="password" name="password" required>
-
-        <label>Età:</label>
-        <input type="number" name="eta" required>
-
-        <label>Livello di esperienza:</label>
-        <input type="text" name="livello_esperienza" required>
-
-        <button type="submit">Registrati</button>
-    </form>
-
+    <div class="circle"></div>
+    <div class="card">
+        <div class="logo">
+            <i class="bx bx-bitcoin"></i>
+        </div>
+        <h2>Crea il tuo account</h2>
+        <form class="form" method="POST">
+            <input type="text" name="nome" placeholder="Nome" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <input type="number" name="eta" placeholder="Età" required>
+            <input type="text" name="livello_esperienza" placeholder="Livello di Esperienza" required>
+            <button type="submit">REGISTRATI</button>
+        </form>
+        <?php if ($errore) { echo "<p>$errore</p>"; } ?>
+        <footer>
+            Hai già un account? <a href="login.php">Accedi qui</a>
+        </footer>
+    </div>
 </body>
 </html>

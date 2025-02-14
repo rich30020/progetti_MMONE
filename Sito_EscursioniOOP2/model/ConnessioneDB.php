@@ -1,36 +1,34 @@
 <?php
 class ConnessioneDB {
+    private static $conn; // Variabile statica per la connessione
 
-private static $instance = null;
-private $conn;
+    // Metodo per ottenere una connessione al database
+    public static function getInstance() {
+        if (self::$conn === null) {
+            // Parametri di connessione
+            $host = 'localhost';    // Host del database
+            $username = 'root';     // Username
+            $password = '';         // Password
+            $dbname = 'escursioni_db'; // Nome del database
 
-// Costruttore privato per impedire la creazione di istanze
-private function __construct() {
-    $servername = "localhost";  // Cambia con il tuo host
-    $username = "root";         // Cambia con il tuo username
-    $password = "";             // Cambia con la tua password
-    $dbname = "escursioni_db";  // Cambia con il nome del tuo database
+            // Crea la connessione
+            self::$conn = new mysqli($host, $username, $password, $dbname);
 
-    // Crea la connessione PDO
-    try {
-        $this->conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Connection failed: " . $e->getMessage());
+            // Controlla se la connessione è riuscita
+            if (self::$conn->connect_error) {
+                die("Connessione fallita: " . self::$conn->connect_error);
+            }
+        }
+        return self::$conn; // Ritorna l'istanza della connessione
     }
-}
 
-// Restituisce l'istanza della connessione (Singleton pattern)
-public static function getInstance() {
-    if (self::$instance == null) {
-        self::$instance = new ConnessioneDB();
-    }
-    return self::$instance->conn;  // Restituisce la connessione PDO
-}
+    // Impedisce che venga clonata la connessione
+    public function __clone() {}
 
-private function __clone() {}
-public function __wakeup() {
-    throw new Exception("Cannot unserialize a singleton.");
-}
+    // Impedisce che venga serializzata la connessione
+    public function __sleep() {}
+
+    // Impedisce che venga deserializzata la connessione
+    public function __wakeup() {}
 }
 ?>

@@ -1,33 +1,23 @@
 <?php
-session_start(); // Avvia la sessione se non è già avviata
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
-require_once __DIR__ . '/Controller/loginController.php';
-
-$errore = ''; // Variabile per gli errori
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Ottieni i dati dal form
+// Verifica se è stato inviato il modulo
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Ottieni i dati dal modulo
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Crea una nuova istanza del controller
+    // Include il file di connessione al DB (Assicurati che il percorso sia corretto)
+    require_once __DIR__ . '/Controller/LoginController.php'; // Usa il controller di login
     $loginController = new LoginController();
+    $errore = $loginController->login($email, $password); // Esegui il login
 
-    // Chiama il metodo login dal controller e ottieni eventuali errori
-    $utente = $loginController->login($email, $password);
-
-    if (is_array($utente)) {  // Verifica se il login è riuscito (l'utente sarà un array)
-        // Se il login è riuscito, salva i dati dell'utente nella sessione
-        $_SESSION['utente_id'] = $utente['id']; // Memorizza l'ID utente
-        $_SESSION['email'] = $utente['email'];  // Memorizza l'email dell'utente
-        $_SESSION['nome'] = $utente['nome'];    // Memorizza il nome dell'utente
-        
-        // Reindirizza alla dashboard o alla pagina desiderata
-        header("Location: index.php"); 
+    // Se il login è riuscito, reindirizza al principale
+    if (!$errore) {
+        header('Location: index.php');
         exit();
-    } else {
-        // Se il login fallisce, mostra l'errore
-        $errore = $utente; // $utente conterrà la stringa di errore
     }
 }
 ?>
@@ -36,11 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://unpkg.com/boxicons@2.1.4/cc/boxicons.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="main.css">
-    <title>Accedi</title>
-    <link rel="icon" type="image/x-icon" href="pngwing.com.png">
+    <title>Login</title>
+    <link rel="stylesheet" href="view/main.css">
 </head>
 <body>
     <div class="circle"></div>
@@ -48,15 +35,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div class="logo">
             <i class="bx bx-bitcoin"></i>
         </div>
-        <h2>Accedi</h2>
-        <form class="form" method="post" action="login.php">
-            <input type="email" placeholder="Email" id="email" name="email" required>
-            <input type="password" placeholder="Password" id="password" name="password" required>
-            <button type="submit">Accedi</button>
-            <?php if ($errore): ?>
-                <div class="error"><?= $errore ?></div>
-            <?php endif; ?>
+        <h2>Login</h2>
+        <form class="form" method="POST">
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit">LOGIN</button>
         </form>
+        <?php if (isset($errore)) { echo "<p>$errore</p>"; } ?>
     </div>
 </body>
 </html>

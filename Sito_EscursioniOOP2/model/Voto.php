@@ -1,76 +1,132 @@
 <?php
-require_once __DIR__ . '/../Model/ConnessioneDB.php'; // Includi il file ConnessioneDB.php
+require_once __DIR__ . '/../Model/ConnessioneDB.php';
 
 class Voto {
 
-    // Metodo per aggiungere un voto
-    public function aggiungiVoto($user_id, $commento_id, $voto, $escursione_db) {
-        // Verifica se il commento esiste nel database prima di inserire il voto
-        if ($commento_id <= 0 || $escursione_db <= 0) {
-            throw new Exception("ID del commento o escursione non validi.");
-        }
+    private $db;
 
-        // Connessione al database tramite Singleton
-        $conn = ConnessioneDB::getInstance();
-
-        // Verifica se il commento con l'ID esiste
-        $sql = "SELECT id FROM commenti WHERE id = :commento_id";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':commento_id', $commento_id, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Se non viene trovato alcun commento, lancia un'eccezione
-        if ($stmt->rowCount() == 0) {
-            throw new Exception("Il commento con ID {$commento_id} non esiste.");
-        }
-
-        // Verifica se l'escursione è valida
-        $sql = "SELECT id FROM escursioni WHERE id = :escursione_db";
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':escursione_db', $escursione_db, PDO::PARAM_INT);
-        $stmt->execute();
-
-        // Se non viene trovata alcuna escursione, lancia un'eccezione
-        if ($stmt->rowCount() == 0) {
-            throw new Exception("L'escursione con ID {$escursione_db} non esiste.");
-        }
-
-        // Query SQL per inserire il voto
-        $sql = "INSERT INTO voti (user_id, commento_id, voto, escursione_db) 
-                VALUES (:user_id, :commento_id, :voto, :escursione_db)";
-        
-        // Prepara la query
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':commento_id', $commento_id, PDO::PARAM_INT);
-        $stmt->bindParam(':voto', $voto, PDO::PARAM_INT);
-        $stmt->bindParam(':escursione_db', $escursione_db, PDO::PARAM_INT);
-
-        // Esegui la query
-        $stmt->execute();
+    public function __construct() {
+        // Ottieni la connessione al database tramite mysqli
+        $this->db = ConnessioneDB::getInstance();
     }
 
-    // Metodo per ottenere il conteggio dei Mi Piace e Non Mi Piace
-    public function getLikeDislikeCount($commento_id, $voto_type) {
-        $conn = ConnessioneDB::getInstance();
+    // Aggiungi un voto (Mi Piace o Non Mi Piace)
+    public function aggiungiVoto($user_id, $commento_id, $voto, $escursione_id) {
+        $query = "INSERT INTO voti (user_id, commento_id, voto, escursione_id) VALUES (?, ?, ?, ?)";
 
-        // Query SQL per ottenere i conteggi
-        $sql = "SELECT 
-                    SUM(CASE WHEN voto = 1 THEN 1 ELSE 0 END) AS mi_piace, 
-                    SUM(CASE WHEN voto = -1 THEN 1 ELSE 0 END) AS non_mi_piace
-                FROM voti 
-                WHERE commento_id = :commento_id AND voto = :voto_type";
-        
         // Prepara la query
-        $stmt = $conn->prepare($sql);
-        $stmt->bindParam(':commento_id', $commento_id, PDO::PARAM_INT);
-        $stmt->bindParam(':voto_type', $voto_type, PDO::PARAM_INT);
+        if ($stmt = $this->db->prepare($query)) {
+            // Associa i parametri
+            $stmt->bind_param("iiii", $user_id, $commento_id, $voto, $escursione_id);
 
-        // Esegui la query
-        $stmt->execute();
+            // Esegui la query e verifica se è andata a buon fine
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                error_log("Errore nell'esecuzione della query: " . $stmt->error);
+                return false;
+            }
+        } else {
+            error_log("Errore nella preparazione della query: " . $this->db->error);
+            return false;
+        }
+    }
 
-        // Ottieni il risultato e restituiscilo
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+    // Aggiorna un voto esistente
+    public function aggiornaVoto($user_id, $commento_id, $voto) {
+        $query = "UPDATE voti SET voto = ? WHERE user_id = ? AND commento_id = ?";
+
+        // Prepara la query
+        if ($stmt = $this->db->prepare($query)) {
+            // Associa i parametri
+            $stmt->bind_param("iii", $voto, $user_id, $commento_id);
+
+            // Esegui la query e verifica se è andata a buon fine
+            if ($stmt->execute()) {
+                return true;
+            } else {
+                error_log("Errore nell'esecuzione della query: " . $stmt->error);
+                return false;
+            }
+        } else {
+            error_log("Errore nella preparazione della query: " . $this->db->error);
+            return false;
+        }
+    }
+
+    // Recupera i voti per un commento
+    public function getVotiPerCommento($commento_id) {
+        $query = "SELECT * FROM voti WHERE commento_id = ?";
+
+        // Prepara la query
+        if ($stmt = $this->db->prepare($query)) {
+            // Associa il parametro
+            $stmt->bind_param("i", $commento_id);
+
+            // Esegui la query
+            $stmt->execute();
+
+            // Ottieni i risultati
+            $result = $stmt->get_result();
+
+            // Restituisci i risultati come array associativo
+            return $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+            error_log("Errore nella preparazione della query: " . $this->db->error);
+            return false;
+        }
+    }
+
+    // Ottieni il conteggio dei Mi Piace e Non Mi Piace per un'escursione
+    public function getLikeDislikeCount($escursione_id, $voto) {
+        $query = "SELECT COUNT(*) as count FROM voti WHERE escursione_id = ? AND voto = ?";
+
+        // Prepara la query
+        if ($stmt = $this->db->prepare($query)) {
+            // Associa i parametri
+            $stmt->bind_param("ii", $escursione_id, $voto);
+
+            // Esegui la query
+            $stmt->execute();
+
+            // Ottieni i risultati
+            $result = $stmt->get_result();
+
+            // Restituisci il conteggio dei Mi Piace o Non Mi Piace
+            $row = $result->fetch_assoc();
+            return $row['count'];
+        } else {
+            error_log("Errore nella preparazione della query: " . $this->db->error);
+            return 0;
+        }
+    }
+
+    // Verifica se un utente ha già votato un commento
+    public function getVotoPerCommentoUtente($user_id, $commento_id) {
+        $query = "SELECT voto FROM voti WHERE user_id = ? AND commento_id = ?";
+
+        // Prepara la query
+        if ($stmt = $this->db->prepare($query)) {
+            // Associa i parametri
+            $stmt->bind_param("ii", $user_id, $commento_id);
+
+            // Esegui la query
+            $stmt->execute();
+
+            // Ottieni i risultati
+            $result = $stmt->get_result();
+
+            // Se l'utente ha votato, restituisce il voto
+            if ($row = $result->fetch_assoc()) {
+                return $row['voto'];
+            }
+
+            // Se non ha votato, restituisce null
+            return null;
+        } else {
+            error_log("Errore nella preparazione della query: " . $this->db->error);
+            return null;
+        }
     }
 }
 ?>

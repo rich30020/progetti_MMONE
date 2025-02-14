@@ -1,54 +1,76 @@
 <?php
-require_once __DIR__ . '/ConnessioneDB.php';
+require_once __DIR__ . '/ConnessioneDB.php';  // Connessione al DB
 
 class Utente {
-    private $db;
 
-    public function __construct() {
-        // Ottieni direttamente l'istanza della connessione PDO
-        $this->db = ConnessioneDB::getInstance(); 
-    }
+    // Metodo per verificare se l'email esiste nel database
+    public function verificaCredenziali($email) {
+        // Ottieni la connessione al database
+        $conn = ConnessioneDB::getInstance();
 
-    public function verificaCredenziali($email, $password) {
-        $query = "SELECT * FROM utenti WHERE email = :email";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+        // Prepara la query per cercare l'utente per email
+        $stmt = $conn->prepare("SELECT * FROM utenti WHERE email = ?");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
-        $utente = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($utente && password_verify($password, $utente['password'])) {
-            return $utente;
+        // Ottieni il risultato
+        $result = $stmt->get_result();
+
+        // Se l'utente esiste, ritorna i suoi dati
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();  // Restituisce i dati dell'utente
         }
+
+        // Se l'utente non esiste, ritorna false
         return false;
     }
 
-    public function emailEsistente($email) {
-        $query = "SELECT * FROM utenti WHERE email = :email";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    // Metodo per ottenere un utente in base all'id
+    public function getUserById($id) {
+        // Ottieni la connessione al database
+        $conn = ConnessioneDB::getInstance();
+
+        // Prepara la query per cercare l'utente per id
+        $stmt = $conn->prepare("SELECT * FROM utenti WHERE id = ?");
+        $stmt->bind_param("i", $id);
         $stmt->execute();
-        return $stmt->rowCount() > 0;
+
+        // Ottieni il risultato
+        $result = $stmt->get_result();
+
+        // Se l'utente esiste, ritorna i suoi dati
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc();  // Restituisce i dati dell'utente
+        }
+
+        // Se l'utente non esiste, ritorna false
+        return false;
     }
 
+    // Metodo per creare un nuovo utente
     public function creaUtente($nome, $email, $password, $eta, $livello_esperienza) {
-        $query = "INSERT INTO utenti (nome, email, password, eta, livello_esperienza) 
-                  VALUES (:nome, :email, :password, :eta, :livello_esperienza)";
-        $stmt = $this->db->prepare($query);
-        $password_hash = password_hash($password, PASSWORD_DEFAULT);
-        $stmt->bindParam(':nome', $nome, PDO::PARAM_STR);
-        $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-        $stmt->bindParam(':password', $password_hash, PDO::PARAM_STR);
-        $stmt->bindParam(':eta', $eta, PDO::PARAM_INT);
-        $stmt->bindParam(':livello_esperienza', $livello_esperienza, PDO::PARAM_STR);
+        $conn = ConnessioneDB::getInstance();
+
+        // Hash della password
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT);
+
+        // Prepara la query di inserimento
+        $stmt = $conn->prepare("INSERT INTO utenti (nome, email, password, eta, livello_esperienza) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssis", $nome, $email, $passwordHash, $eta, $livello_esperienza);
         $stmt->execute();
     }
 
-    public function getUserById($userId) {
-        $query = "SELECT nome FROM utenti WHERE id = :id";
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+    // Metodo per verificare se l'email esiste già nel database
+    public function emailEsistente($email) {
+        $conn = ConnessioneDB::getInstance();
+
+        $stmt = $conn->prepare("SELECT * FROM utenti WHERE email = ?");
+        $stmt->bind_param("s", $email);
         $stmt->execute();
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $result = $stmt->get_result();
+
+        // Se l'email esiste, ritorna true
+        return $result->num_rows > 0;
     }
 }
 ?>

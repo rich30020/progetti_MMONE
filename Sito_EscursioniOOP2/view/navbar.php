@@ -9,7 +9,8 @@
     <nav class="navbar">
         <a href="../index.php">Dashboard</a>
         <a href="view/esplora.php">Esplora</a>
-        <a href="logout.php">Logout</a>
+        <a href="../logout.php">Logout</a>
     </nav>
 </body>
 </html>
+

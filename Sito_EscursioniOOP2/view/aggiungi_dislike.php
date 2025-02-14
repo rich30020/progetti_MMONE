@@ -2,17 +2,17 @@
 session_start();
 
 // Verifica se l'utente è loggato
-if (!isset($_SESSION['utente_id'])) {
+if (!isset($_SESSION['user']['id'])) {
     echo "Utente non loggato";
     exit;
 }
 
-require_once __DIR__ . '/../Controller/VotoController.php';
+require_once __DIR__ . '/../Controller/CommentiController.php';
 
-// Ottieni l'ID del commento, dell'escursione e l'ID dell'utente
+// Ottieni i dati del voto
 $commento_id = isset($_POST['commento_id']) ? (int)$_POST['commento_id'] : 0;
 $escursione_db = isset($_POST['escursione_db']) ? (int)$_POST['escursione_db'] : 0;
-$user_id = $_SESSION['utente_id'];
+$user_id = $_SESSION['user']['id'];
 $voto = -1; // Non Mi Piace
 
 // Verifica che i dati siano validi
@@ -21,26 +21,23 @@ if ($commento_id <= 0 || $escursione_db <= 0) {
     exit;
 }
 
-// Instanzia il controller del voto
-$votoController = new VotoController();
+// Instanzia il controller del commento
+$commentoController = new CommentiController();
 
-// Aggiungi il voto (Non Mi Piace)
-try {
-    $votoController->aggiungiVoto($user_id, $commento_id, $voto, $escursione_db);
-} catch (Exception $e) {
-    echo "Errore: " . $e->getMessage();
-    exit;
+// Verifica se l'utente ha già messo "Mi Piace"
+if ($commentoController->hasLiked($user_id, $commento_id)) {
+    // Rimuovi il "Mi Piace" e aggiungi il "Non Mi Piace"
+    $commentoController->removeLike($user_id, $commento_id);
 }
 
-// Ora recuperiamo i dati aggiornati dei voti
-require_once __DIR__ . '/../Model/Voto.php';
-$votoModel = new Voto();
+$commentoController->addDislike($user_id, $commento_id);
 
-// Usa il metodo per ottenere i conteggi dei Mi Piace e Non Mi Piace
-$voti = $votoModel->getLikeDislikeCount($commento_id, $voto);
+// Ottieni i nuovi contatori di Mi Piace e Non Mi Piace
+$contatori = $commentoController->getLikeDislikeCount($commento_id);
 
-// Mostra i voti aggiornati sulla stessa pagina
-echo "Mi Piace: " . $voti['mi_piace'] . "<br>";
-echo "Non Mi Piace: " . $voti['non_mi_piace'] . "<br>";
+echo "Mi Piace: " . $contatori['mi_piace'] . "<br>";
+echo "Non Mi Piace: " . $contatori['non_mi_piace'] . "<br>";
+
 exit;
+
 ?>
