@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Verifica che l'utente sia loggato, altrimenti redirige alla pagina di login
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit();
@@ -13,7 +12,6 @@ require_once __DIR__ . '/../Controller/CommentiController.php';
 $escursioniController = new EscursioniController();
 $commentiController = new CommentiController();
 
-// Recupera tutte le escursioni
 $escursioni = $escursioniController->getEscursioni();
 
 ?>
@@ -248,7 +246,7 @@ $escursioni = $escursioniController->getEscursioni();
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
-                                    <a href="commenti_completi.php?escursione_id=<?php echo $escursione['id']; ?>" class="mostra-altro-btn">Mostra altri commenti</a>
+                                    <a href="commenti_completi.php?escursione_id=<?php echo $escursione['id']; ?>" class="mostra-altro-btn">Mostra commenti</a>
                                 <?php endif; ?>
                             </div>
                         </div>

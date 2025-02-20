@@ -10,7 +10,6 @@ class Escursione {
         $this->conn = ConnessioneDB::getInstance()->getConnessione(); // Ottieni la connessione singleton
     }
 
-    // Ottieni tutte le escursioni
     public function getAllEscursioni() {
         $query = "SELECT * FROM escursioni";
         $result = $this->conn->query($query);
@@ -31,7 +30,6 @@ class Escursione {
         }
     }
 
-    // Ottieni l'escursione per ID
     public function getEscursioneById($id) {
         $query = "SELECT * FROM escursioni WHERE id = ?";
         $stmt = $this->conn->prepare($query);
@@ -52,7 +50,6 @@ class Escursione {
         }
     }
 
-    // Aggiungi una nuova escursione
     public function insertEscursione($userId, $sentiero, $durata, $difficolta, $punti, $foto) {
         $query = "INSERT INTO escursioni (user_id, sentiero, durata, difficolta, punti, foto) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $this->conn->prepare($query);

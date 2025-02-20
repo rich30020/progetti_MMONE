@@ -5,11 +5,9 @@ class Utente {
     private $db;
 
     public function __construct() {
-        // Ottieni la connessione al database tramite ConnessioneDB::getConnessione()
         $this->db = ConnessioneDB::getInstance()->getConnessione();
     }
 
-    // Metodo per ottenere i dettagli di un utente tramite ID
     public function getUserById($userId) {
         try {
             $query = "SELECT * FROM utenti WHERE id = ?";
@@ -17,7 +15,7 @@ class Utente {
             if ($stmt === false) {
                 throw new Exception("Errore nella preparazione della query: " . $this->db->error);
             }
-            $stmt->bind_param("i", $userId); // "i" indica che il parametro è un intero
+            $stmt->bind_param("i", $userId);
             $stmt->execute();
             $result = $stmt->get_result();
             return $result->fetch_assoc();
@@ -27,23 +25,18 @@ class Utente {
         }
     }
 
-    // Metodo per aggiornare il profilo di un utente
     public function updateProfile($userId, $nome, $email, $eta, $livello_esperienza) {
         try {
-            // Prepara la query SQL per aggiornare il profilo
             $query = "UPDATE utenti SET nome = ?, email = ?, eta = ?, livello_esperienza = ? WHERE id = ?";
             $stmt = $this->db->prepare($query);
             if ($stmt === false) {
                 throw new Exception("Errore nella preparazione della query: " . $this->db->error);
             }
 
-            // Bind dei parametri per la query SQL
             $stmt->bind_param('ssiii', $nome, $email, $eta, $livello_esperienza, $userId);
 
-            // Esegui la query
             $stmt->execute();
 
-            // Verifica se l'aggiornamento ha avuto successo (se almeno una riga è stata aggiornata)
             return $stmt->affected_rows > 0;
         } catch (Exception $e) {
             error_log("Errore nell'aggiornamento del profilo: " . $e->getMessage());
@@ -51,7 +44,6 @@ class Utente {
         }
     }
 
-    // Metodo per verificare le credenziali dell'utente tramite email
     public function verificaCredenziali($email) {
         try {
             $query = "SELECT * FROM utenti WHERE email = ?";
@@ -59,7 +51,7 @@ class Utente {
             if ($stmt === false) {
                 throw new Exception("Errore nella preparazione della query: " . $this->db->error);
             }
-            $stmt->bind_param("s", $email); // "s" indica che il parametro è una stringa
+            $stmt->bind_param("s", $email); 
             $stmt->execute();
             $result = $stmt->get_result();
             return $result->fetch_assoc();
@@ -69,7 +61,6 @@ class Utente {
         }
     }
 
-    // Metodo per verificare se un'email è già registrata
     public function emailEsistente($email) {
         try {
             $query = "SELECT COUNT(*) FROM utenti WHERE email = ?";
@@ -77,7 +68,7 @@ class Utente {
             if ($stmt === false) {
                 throw new Exception("Errore nella preparazione della query: " . $this->db->error);
             }
-            $stmt->bind_param("s", $email); // "s" indica che il parametro è una stringa
+            $stmt->bind_param("s", $email);
             $stmt->execute();
             return $stmt->get_result()->fetchColumn() > 0;
         } catch (Exception $e) {
@@ -86,7 +77,6 @@ class Utente {
         }
     }
 
-    // Metodo per creare un nuovo utente
     public function creaUtente($nome, $email, $password, $eta, $livello_esperienza) {
         try {
             $query = "INSERT INTO utenti (nome, email, password, eta, livello_esperienza) VALUES (?, ?, ?, ?, ?)";

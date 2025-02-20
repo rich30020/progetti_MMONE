@@ -6,7 +6,6 @@ class Commenti {
     private $db;
 
     public function __construct() {
-        // Usa la connessione al database tramite Singleton
         $this->db = ConnessioneDB::getInstance()->getConnessione();
     }
 

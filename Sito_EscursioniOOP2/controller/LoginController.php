@@ -17,7 +17,7 @@ class LoginController {
 
     private function iniziaSessione($utente) {
         session_start();
-        // Imposta i parametri dei cookie di sessione per la durata di 30 giorni
+
         session_set_cookie_params([
             'lifetime' => 60 * 60 * 24 * 30,
             'path' => '/',
@@ -26,7 +26,7 @@ class LoginController {
             'httponly' => true,
             'samesite' => 'Lax'
         ]);
-        session_regenerate_id(true); // Rigenera l'ID di sessione per sicurezza
+        session_regenerate_id(true);
 
         $_SESSION['user'] = [
             'id' => $utente['id'],

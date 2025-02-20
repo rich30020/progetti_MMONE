@@ -1,41 +1,29 @@
 <?php
 session_start();
 
-// Includiamo il controller per i commenti
 require_once __DIR__ . '/../Controller/CommentiController.php';
 
-// Creiamo un'istanza del controller
 $commentiController = new CommentiController();
 
-// Otteniamo l'ID dell'escursione
 $escursione_id = isset($_GET['escursione_id']) ? $_GET['escursione_id'] : 0;
 
-// Otteniamo i commenti
 $commenti = $commentiController->getCommenti($escursione_id);
 
-// Gestione dei voti (Mi Piace / Non mi Piace)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
     if (isset($_POST['mi_piace'])) {
         $commento_id = $_POST['mi_piace'];
-        // Rimuoviamo eventuali voti precedenti
         $commentiController->rimuoviVoto($commento_id, $_SESSION['user_id']);
-        // Aggiungiamo il voto "Mi Piace"
         $commentiController->incrementaMiPiace($commento_id);
-        // Registriamo il voto
         $commentiController->registraVoto($commento_id, $_SESSION['user_id'], 'mi_piace');
     }
 
     if (isset($_POST['non_mi_piace'])) {
         $commento_id = $_POST['non_mi_piace'];
-        // Rimuoviamo eventuali voti precedenti
         $commentiController->rimuoviVoto($commento_id, $_SESSION['user_id']);
-        // Aggiungiamo il voto "Non mi Piace"
         $commentiController->incrementaNonMiPiace($commento_id);
-        // Registriamo il voto
         $commentiController->registraVoto($commento_id, $_SESSION['user_id'], 'non_mi_piace');
     }
 
-    // Ricarichiamo la pagina per vedere gli aggiornamenti
     header("Location: commenti_completi.php?escursione_id=$escursione_id");
     exit;
 }
@@ -159,7 +147,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
 
 <h1>Commenti Completi</h1>
 
-<!-- Bottone per tornare a esplora.php -->
 <a href="esplora.php" class="back-btn">Torna a Esplora</a>
 
 <div class="comment-container">
@@ -173,7 +160,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
 
                 <form method="post" action="commenti_completi.php?escursione_id=<?php echo $escursione_id; ?>" class="comment-actions">
                     <?php
-                    // Verifica se l'utente ha già votato
                     $voto = isset($_SESSION['voti_commenti'][$commento['id']]) ? $_SESSION['voti_commenti'][$commento['id']] : null;
                     ?>
 

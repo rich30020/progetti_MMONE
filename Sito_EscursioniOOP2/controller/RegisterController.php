@@ -6,15 +6,12 @@ class RegisterController {
         try {
             $utenteModel = new Utente();
 
-            // Controlla se l'email è già registrata
             if ($utenteModel->emailEsistente($email)) {
                 return "Questa email è già registrata!";
             }
 
-            // Hash della password
             $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
 
-            // Crea un nuovo utente
             $utenteModel->creaUtente($nome, $email, $hashedPassword, $eta, $livello_esperienza);
             return "Registrazione riuscita!";
         } catch (Exception $e) {
