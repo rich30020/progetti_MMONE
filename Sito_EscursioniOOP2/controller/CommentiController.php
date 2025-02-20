@@ -11,8 +11,9 @@ class CommentiController {
 
     // Metodo per ottenere tutti i commenti di una specifica escursione
     public function getCommenti($escursione_id) {
-        $sql = "SELECT c.id, c.user_id, c.commento, c.mi_piace, c.non_mi_piace
+        $sql = "SELECT c.id, c.user_id, c.commento, c.mi_piace, c.non_mi_piace, u.nome 
                 FROM commenti c
+                JOIN utenti u ON c.user_id = u.id
                 WHERE c.escursione_id = ?
                 ORDER BY c.data DESC";
 
@@ -30,21 +31,9 @@ class CommentiController {
         return $commenti;
     }
 
-    // Metodo per ottenere un singolo commento per ID
-    public function getCommentoById($commento_id) {
-        $sql = "SELECT * FROM commenti WHERE id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('i', $commento_id);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        $commento = $result->fetch_assoc();
-        $stmt->close();
-        return $commento;
-    }
-
     // Metodo per aggiungere un commento
     public function aggiungiCommento($escursione_id, $user_id, $commento) {
-        $commento = htmlspecialchars($commento);
+        $commento = htmlspecialchars($commento); // Prevenzione XSS
         $sql = "INSERT INTO commenti (escursione_id, user_id, commento, data) VALUES (?, ?, ?, NOW())";
         $stmt = $this->conn->prepare($sql);
         $stmt->bind_param('iis', $escursione_id, $user_id, $commento);
@@ -98,12 +87,14 @@ class CommentiController {
         $result = $stmt->get_result();
         
         if ($result->num_rows > 0) {
+            // Se esiste già un voto dell'utente, lo aggiorniamo
             $stmt->close();
             $sql = "UPDATE voti SET voto = ? WHERE commento_id = ? AND user_id = ?";
             $stmt = $this->conn->prepare($sql);
             $stmt->bind_param('sii', $voto, $commento_id, $user_id);
             $esito = $stmt->execute();
         } else {
+            // Se non esiste, inseriamo il nuovo voto
             $stmt->close();
             $sql = "INSERT INTO voti (commento_id, user_id, voto) VALUES (?, ?, ?)";
             $stmt = $this->conn->prepare($sql);
@@ -114,16 +105,5 @@ class CommentiController {
         $stmt->close();
         return $esito;
     }
-
-    // Metodo per rimuovere un voto
-    public function rimuoviVoto($commento_id, $user_id) {
-        $sql = "DELETE FROM voti WHERE commento_id = ? AND user_id = ?";
-        $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ii', $commento_id, $user_id);
-        $esito = $stmt->execute();
-        $stmt->close();
-        return $esito;
-    }
 }
-
 ?>

@@ -8,6 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $durata = $_POST['durata'] ?? '';
     $difficolta = $_POST['difficolta'] ?? '';
     $punti = $_POST['punti'] ?? '';
+    $bellezza = $_POST['bellezza'] ?? ''; // Nuovo campo
 
     if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
         $foto_nome = basename($_FILES['foto']['name']);
@@ -18,13 +19,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $errore = "Carica una foto valida.";
     }
+
     if (empty($errore)) {
         try {
             $conn = ConnessioneDB::getInstance()->getConnessione();
 
-            $sql = "INSERT INTO escursioni (sentiero, durata, difficolta, punti, foto) VALUES (?, ?, ?, ?, ?)";
+            $sql = "INSERT INTO escursioni (sentiero, durata, difficolta, punti, foto, bellezza) VALUES (?, ?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param('sssis', $sentiero, $durata, $difficolta, $punti, $foto_nome); // Usa solo il nome del file
+            $stmt->bind_param('sssisi', $sentiero, $durata, $difficolta, $punti, $foto_nome, $bellezza);
 
             if ($stmt->execute()) {
                 header('Location: ../index.php'); 
@@ -75,7 +77,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         form input[type="text"],
         form input[type="number"],
-        form input[type="file"] {
+        form input[type="file"],
+        form select {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
@@ -125,6 +128,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <label for="foto">Foto:</label>
             <input type="file" name="foto" id="foto" required>
+
+            <label for="bellezza">Quanto è bello il percorso? (1-5):</label>
+            <input type="number" name="bellezza" id="bellezza" min="1" max="5" required>
 
             <button type="submit">Aggiungi Escursione</button>
         </form>
