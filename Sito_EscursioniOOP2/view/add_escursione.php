@@ -1,3 +1,56 @@
+<?php
+// Assicurati di includere il file per la connessione al database
+require_once __DIR__ . '/../model/ConnessioneDB.php';
+
+// Variabili di errore
+$errore = '';
+
+// Controlla se il form è stato inviato
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Recupera i dati inviati dal form
+    $sentiero = $_POST['sentiero'] ?? '';
+    $durata = $_POST['durata'] ?? '';
+    $difficolta = $_POST['difficolta'] ?? '';
+    $punti = $_POST['punti'] ?? '';
+    
+    // Gestisci l'upload della foto
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        // Estrai solo il nome del file, senza percorso
+        $foto_nome = basename($_FILES['foto']['name']);
+        
+        // Salva la foto nella cartella "uploads" (puoi cambiare il percorso se necessario)
+        if (!move_uploaded_file($_FILES['foto']['tmp_name'], __DIR__ . '/../uploads/' . $foto_nome)) {
+            $errore = "Errore nel caricamento della foto.";
+        }
+    } else {
+        $errore = "Carica una foto valida.";
+    }
+    
+    // Se non ci sono errori, inserisci i dati nel database
+    if (empty($errore)) {
+        try {
+            // Ottieni la connessione al database
+            $conn = ConnessioneDB::getInstance()->getConnessione();
+
+            // Prepara la query di inserimento
+            $sql = "INSERT INTO escursioni (sentiero, durata, difficolta, punti, foto) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('sssis', $sentiero, $durata, $difficolta, $punti, $foto_nome); // Usa solo il nome del file
+
+            // Esegui la query
+            if ($stmt->execute()) {
+                header('Location: ../index.php');  // Redirect dopo il successo
+                exit;
+            } else {
+                $errore = "Errore nell'inserimento dell'escursione nel database.";
+            }
+        } catch (Exception $e) {
+            $errore = "Errore nel database: " . $e->getMessage();
+        }
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="it">
 <head>

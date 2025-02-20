@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Verifica che l'utente sia loggato, altrimenti redirige alla pagina di login
 if (!isset($_SESSION['user'])) {
     header('Location: login.php');
     exit();
@@ -12,7 +13,9 @@ require_once __DIR__ . '/../Controller/CommentiController.php';
 $escursioniController = new EscursioniController();
 $commentiController = new CommentiController();
 
+// Recupera tutte le escursioni
 $escursioni = $escursioniController->getEscursioni();
+
 ?>
 
 <!DOCTYPE html>
@@ -27,7 +30,7 @@ $escursioni = $escursioniController->getEscursioni();
     <meta name="description" content="Esplora diverse escursioni e condividi le tue esperienze.">
     <style>
         body {
-            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            background: #fff;
             font-family: 'Arial', sans-serif;
             color: #333;
         }
@@ -67,26 +70,19 @@ $escursioni = $escursioniController->getEscursioni();
             border: none;
             border-radius: 15px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
 
         .card-body {
             background: #fff;
             border-radius: 15px;
-            transition: background-color 0.3s ease;
         }
 
-        .card:hover .card-body {
-            background-color: #f0f0f0;
+        .card img {
+            border-radius: 15px;
         }
 
         .btn-primary {
-            background: #00695c;
+            background: #216ce7;
             border: none;
             border-radius: 50px;
             padding: 10px 20px;
@@ -95,10 +91,12 @@ $escursioni = $escursioniController->getEscursioni();
         }
 
         .btn-primary:hover {
-            background: #004d40;
+            background:rgb(4, 54, 136);
         }
 
         .like-dislike-buttons button {
+            font-size: 0.8em;
+            padding: 5px 10px;
             margin-right: 5px;
         }
 
@@ -117,38 +115,31 @@ $escursioni = $escursioniController->getEscursioni();
             opacity: 0.8;
         }
 
-        .card img {
-            border-radius: 15px;
-            transition: transform 0.3s ease;
-        }
-
         .comment-section {
-            max-height: 200px;
+            max-height: 120px;
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px;
             background: #e0f7fa;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
             font-size: 0.9em;
             display: none;
-            transition: max-height 0.5s ease-out, padding 0.3s ease-out;
         }
 
         .comment-section.show {
             display: block;
-            max-height: 500px;
+            max-height: 200px;
         }
 
         .comment-section h5 {
             color: #00796b;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .comment-section p {
             color: #555;
             line-height: 1.4;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .comment-btn {
@@ -159,8 +150,7 @@ $escursioni = $escursioniController->getEscursioni();
             color: white;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
-            transition: background 0.3s;
+            margin-top: 8px;
         }
 
         .comment-btn:hover {
@@ -182,12 +172,31 @@ $escursioni = $escursioniController->getEscursioni();
             font-weight: bold;
             margin-top: 5px;
         }
+
+        .form-control {
+            border-radius: 15px;
+            padding: 10px;
+            font-size: 1em;
+            border: 1px solid #ccc;
+            box-shadow: none;
+            margin-top: 10px;
+        }
+
+        .form-control:focus {
+            border-color: #66bb6a;
+        }
+
+        .comment-preview {
+            font-size: 0.9em;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
     </style>
 </head>
 
 <body>
     <?php include 'navbar.php'; ?>
-    
+
     <div class="container mt-5">
         <h1 class="mb-4">Esplora Escursioni</h1>
         <p>Benvenuto, <?php echo htmlspecialchars($_SESSION['user']['nome']); ?>! <a href="../logout.php">Logout</a></p>
@@ -195,7 +204,9 @@ $escursioni = $escursioniController->getEscursioni();
         <div class="grid-container">
             <?php if (!empty($escursioni)): ?>
                 <?php foreach ($escursioni as $escursione): 
-                    $utente = $escursioniController->getUserById($escursione['user_id']); ?>
+                    // Recupera l'utente che ha caricato l'escursione
+                    $utente = isset($escursione['user_id']) ? $escursioniController->getUserById($escursione['user_id']) : null;
+                ?>
                     <div class="card">
                         <div class="card-body">
                             <h3 class="card-title"><?php echo htmlspecialchars($escursione['sentiero']); ?> <small class="text-muted">by <?php echo htmlspecialchars($utente ? $utente['nome'] : 'Utente sconosciuto'); ?></small></h3>
@@ -209,6 +220,7 @@ $escursioni = $escursioniController->getEscursioni();
                                 <p>Nessuna immagine disponibile</p>
                             <?php endif; ?>
 
+                            <!-- Commenti e Interazioni -->
                             <div class="interazioni">
                                 <?php if (isset($_SESSION['user'])): ?>
                                     <form method="post" action="aggiungi_commento.php" class="mt-3">
@@ -221,27 +233,22 @@ $escursioni = $escursioniController->getEscursioni();
                                 <?php endif; ?>
 
                                 <?php 
+                                // Recupera i commenti per l'escursione, ma limitati ai primi 3
                                 $comments = $commentiController->getCommenti($escursione['id']);
-                                if (!empty($comments)): ?>
+                                $comments_to_show = array_slice($comments, 0, 3); // Limitato a 3
+                                if (!empty($comments_to_show)): ?>
                                     <div class="comment-section">
-                                        <h5>Commenti:</h5>
-                                        <?php foreach ($comments as $commento): 
-                                            $utenteCommento = $escursioniController->getUserById($commento['user_id']); ?>
-                                            <div class="comment">
+                                        <?php foreach ($comments_to_show as $commento): 
+                                            // Recupera l'utente che ha scritto il commento
+                                            $utenteCommento = isset($commento['user_id']) ? $escursioniController->getUserById($commento['user_id']) : null;
+                                        ?>
+                                            <div class="commento-piccolo">
                                                 <strong><?php echo htmlspecialchars($utenteCommento ? $utenteCommento['nome'] : 'Utente sconosciuto'); ?>:</strong>
-                                                <p class="comment-text" id="comment-text-<?php echo $commento['id']; ?>">
-                                                    <?php echo htmlspecialchars(substr($commento['commento'], 0, 100)); ?>...
-                                                </p>
-                                                <span class="show-more" onclick="toggleComment(<?php echo $commento['id']; ?>)">Leggi di più</span>
-
-                                                <div class="like-dislike-buttons">
-                                                    <button class="btn btn-success like-btn" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione['id']; ?>">👍 (<span id="like-count-<?php echo $commento['id']; ?>">0</span>)</button>
-                                                    <button class="btn btn-danger dislike-btn" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione['id']; ?>">👎 (<span id="dislike-count-<?php echo $commento['id']; ?>">0</span>)</button>
-                                                </div>
+                                                <p><?php echo htmlspecialchars(substr($commento['commento'], 0, 100)); ?>...</p>
                                             </div>
                                         <?php endforeach; ?>
                                     </div>
-                                    <button class="comment-btn" onclick="toggleComments()">Mostra Commenti</button>
+                                    <a href="commenti_completi.php?escursione_id=<?php echo $escursione['id']; ?>" class="mostra-altro-btn">Mostra altri commenti</a>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -256,79 +263,5 @@ $escursioni = $escursioniController->getEscursioni();
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="view/main.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const likeButtons = document.querySelectorAll(".like-btn");
-            const dislikeButtons = document.querySelectorAll(".dislike-btn");
-
-            likeButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    const commentoId = this.dataset.commentoId;
-                    const escursioneId = this.dataset.escursioneId;
-
-                    fetch('aggiungi_like.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            'commento_id': commentoId,
-                            'escursione_db': escursioneId
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById(`like-count-${commentoId}`).textContent = data.like_count;
-                        document.getElementById(`dislike-count-${commentoId}`).textContent = data.dislike_count;
-
-                        this.disabled = true;
-                        document.querySelector(`.dislike-btn[data-commento-id="${commentoId}"]`).disabled = false;
-                    });
-                });
-            });
-
-            dislikeButtons.forEach(button => {
-                button.addEventListener("click", function() {
-                    const commentoId = this.dataset.commentoId;
-                    const escursioneId = this.dataset.escursioneId;
-
-                    fetch('aggiungi_dislike.php', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/x-www-form-urlencoded',
-                        },
-                        body: new URLSearchParams({
-                            'commento_id': commentoId,
-                            'escursione_db': escursioneId
-                        })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        document.getElementById(`like-count-${commentoId}`).textContent = data.like_count;
-                        document.getElementById(`dislike-count-${commentoId}`).textContent = data.dislike_count;
-
-                        this.disabled = true;
-                        document.querySelector(`.like-btn[data-commento-id="${commentoId}"]`).disabled = false;
-                    });
-                });
-            });
-        });
-
-        function toggleComments() {
-            const commentSection = document.querySelector('.comment-section');
-            commentSection.classList.toggle('show');
-        }
-
-        function toggleComment(commentId) {
-            const commentText = document.getElementById(`comment-text-${commentId}`);
-            const fullText = "<?php echo htmlspecialchars($commento['commento']); ?>"; 
-            if (commentText.textContent.length < fullText.length) {
-                commentText.textContent = fullText;
-            } else {
-                commentText.textContent = fullText.substring(0, 100) + '...';
-            }
-        }
-    </script>
 </body>
 </html>

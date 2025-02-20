@@ -19,7 +19,7 @@ body {
     color: #2e3444;
 }
 
-/* Navbar */
+
 .navbar {
     width: 100%;
     background-color: #216ce7;
@@ -42,7 +42,6 @@ body {
     transform: scale(1.1);
 }
 
-/* Contenuto principale */
 .content {
     width: 100%;
     max-width: 1200px;
@@ -53,7 +52,7 @@ body {
     padding: 20px;
 }
 
-/* Titolo */
+
 h1 {
     margin-bottom: 20px;
     color: #2e3444;
@@ -62,25 +61,25 @@ h1 {
     animation: fadeIn 2s;
 }
 
-/* Griglia delle escursioni con Flexbox */
+
 .escursioni-grid {
-    display: flex; /* Usa Flexbox per disporre gli elementi in orizzontale */
-    flex-wrap: wrap; /* Gli elementi vanno a capo se non c'è abbastanza spazio */
-    gap: 20px; /* Spazio tra gli elementi */
-    justify-content: flex-start; /* Allinea gli elementi a sinistra */
+    display: flex; 
+    flex-wrap: wrap;
+    gap: 20px; 
+    justify-content: flex-start;
     margin-top: 30px;
     width: 100%;
 }
 
 .escursione-item {
-    flex: 1 1 calc(33.333% - 20px); /* Ogni escursione occupa un terzo della larghezza del contenitore, con gap */
-    box-sizing: border-box; /* Evita che padding e margini influenzino la larghezza */
+    flex: 1 1 calc(33.333% - 20px);
+    box-sizing: border-box;
     padding: 20px;
     background-color: #ffffff;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin-bottom: 20px; /* Spazio tra le righe */
+    margin-bottom: 20px; 
 }
 
 .escursione-item:hover {
@@ -101,7 +100,6 @@ h1 {
     color: #555;
 }
 
-/* Immagine delle escursioni */
 .escursione-item img {
     border-radius: 10px;
     margin-top: 10px;
@@ -114,7 +112,6 @@ h1 {
     opacity: 0.8;
 }
 
-/* Interazioni */
 .interazioni form {
     margin: 10px 0;
     display: flex;
@@ -172,7 +169,7 @@ form button[type="submit"] {
     width: 100%;
 }
 
-/* Animazioni di entrata */
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -184,19 +181,18 @@ form button[type="submit"] {
     }
 }
 
-/* Media Queries per dispositivi mobili */
 @media (max-width: 768px) {
     .escursione-item {
-        flex: 1 1 calc(50% - 20px); /* Su schermi più piccoli, ogni escursione occupa metà della larghezza */
+        flex: 1 1 calc(50% - 20px);
     }
 }
 
 @media (max-width: 480px) {
     .escursione-item {
-        flex: 1 1 100%; /* Su schermi molto piccoli, ogni escursione occupa tutta la larghezza */
+        flex: 1 1 100%; 
     }
 }
-/* Stili per le immagini delle escursioni */
+
 .escursione-img {
     border-radius: 10px;
     margin-top: 10px;
@@ -204,7 +200,7 @@ form button[type="submit"] {
     height: auto;
 }
 
-/* Stili per il form del commento */
+
 .comment-form {
     width: 100%;
     display: flex;
@@ -233,7 +229,7 @@ form button[type="submit"] {
     background-color: #3f4d9c;
 }
 
-/* Stili per i commenti */
+
 .commento {
     background-color: #e3f2fd;
     border-left: 5px solid #1e88e5;
@@ -242,7 +238,6 @@ form button[type="submit"] {
     border-radius: 8px;
 }
 
-/* Stili per i pulsanti Mi Piace e Non Mi Piace */
 .like-dislike-buttons form {
     display: inline-block;
     margin-right: 10px;
