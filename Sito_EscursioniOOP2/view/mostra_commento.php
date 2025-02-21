@@ -73,7 +73,6 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
             text-align: center;
         }
     </style>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -82,9 +81,7 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
         <?php if ($commenti): ?>
             <?php foreach ($commenti as $commento): ?>
                 <?php
-                    // Controlla se l'utente ha già votato
-                    $votoUtente = $votoController->getVotoPerCommentoUtente($user_id, $commento['id']);
-                    $votato = $votoUtente !== null;
+                    // Recupera i contatori "Mi Piace" e "Non Mi Piace" dal database
                     $miPiaceCount = $votoController->getLikeDislikeCount($commento['id'], 1); // Mi Piace
                     $nonMiPiaceCount = $votoController->getLikeDislikeCount($commento['id'], -1); // Non Mi Piace
                 ?>
@@ -99,8 +96,8 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                                <strong>Non Mi Piace:</strong> <span id="non_mi_piace_<?php echo $commento['id']; ?>"><?php echo $nonMiPiaceCount; ?></span></p>
 
                             <!-- Pulsante per votare -->
-                            <button class="btn btn-success btn-sm mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>" <?php echo $votato ? 'disabled' : ''; ?>>Mi Piace</button>
-                            <button class="btn btn-danger btn-sm non_mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>" <?php echo $votato ? 'disabled' : ''; ?>>Non Mi Piace</button>
+                            <button class="btn btn-success btn-sm mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>">Mi Piace</button>
+                            <button class="btn btn-danger btn-sm non_mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>">Non Mi Piace</button>
                         </div>
                     </div>
                 </div>
@@ -110,6 +107,7 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
         <?php endif; ?>
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
     $(document).ready(function() {
         // Gestione del clic sul bottone "Mi Piace"
@@ -131,10 +129,6 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                         // Aggiorna i contatori
                         $('#mi_piace_' + commentoId).text(data.mi_piace);
                         $('#non_mi_piace_' + commentoId).text(data.non_mi_piace);
-
-                        // Disabilita i pulsanti
-                        $('#commento_' + commentoId).find('.mi_piace_button').prop('disabled', true);
-                        $('#commento_' + commentoId).find('.non_mi_piace_button').prop('disabled', true);
                     } else {
                         alert(data.error);
                     }
@@ -164,10 +158,6 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                         // Aggiorna i contatori
                         $('#mi_piace_' + commentoId).text(data.mi_piace);
                         $('#non_mi_piace_' + commentoId).text(data.non_mi_piace);
-
-                        // Disabilita i pulsanti
-                        $('#commento_' + commentoId).find('.mi_piace_button').prop('disabled', true);
-                        $('#commento_' + commentoId).find('.non_mi_piace_button').prop('disabled', true);
                     } else {
                         alert(data.error);
                     }
