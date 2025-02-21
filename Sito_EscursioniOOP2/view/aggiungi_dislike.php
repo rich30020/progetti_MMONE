@@ -19,12 +19,12 @@ if ($commento_id === 0 || $escursione_id === 0 || !$user_id) {
     exit();
 }
 
-if ($commentiController->aggiungiNonMiPiace($commento_id, $user_id, $escursione_id)) {
+if ($commentiController->aggiungiNonMiPiace($commento_id)) {
     $commento = $commentiController->getCommentoById($commento_id);
 
     echo json_encode([
-        'like_count' => $commento['like_count'], 
-        'dislike_count' => $commento['dislike_count']
+        'mi_piace' => $commento['mi_piace'], 
+        'non_mi_piace' => $commento['non_mi_piace']
     ]);
 } else {
     echo json_encode(['error' => 'Errore nell\'aggiunta del "non mi piace"']);

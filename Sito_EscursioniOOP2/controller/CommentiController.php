@@ -11,7 +11,7 @@ class CommentiController {
 
     // Metodo per ottenere tutti i commenti di una specifica escursione
     public function getCommenti($escursione_id) {
-        $sql = "SELECT c.id, c.user_id, c.commento, c.mi_piace, c.non_mi_piace, u.nome 
+        $sql = "SELECT c.id, c.user_id, c.commento, c.mi_piace, c.non_mi_piace, u.nome, c.data
                 FROM commenti c
                 JOIN utenti u ON c.user_id = u.id
                 WHERE c.escursione_id = ?
@@ -43,19 +43,13 @@ class CommentiController {
     }
 
     // Metodo per aggiungere un "Mi Piace" a un commento
-    public function aggiungiMiPiace($commento_id, $user_id, $escursione_id) {
-        if ($this->registraVoto($commento_id, $user_id, 'mi_piace')) {
-            return $this->incrementaMiPiace($commento_id);
-        }
-        return false;
+    public function aggiungiMiPiace($commento_id) {
+        return $this->incrementaMiPiace($commento_id);
     }
 
     // Metodo per aggiungere un "Non Mi Piace" a un commento
-    public function aggiungiNonMiPiace($commento_id, $user_id, $escursione_id) {
-        if ($this->registraVoto($commento_id, $user_id, 'non_mi_piace')) {
-            return $this->incrementaNonMiPiace($commento_id);
-        }
-        return false;
+    public function aggiungiNonMiPiace($commento_id) {
+        return $this->incrementaNonMiPiace($commento_id);
     }
 
     // Metodo per incrementare il contatore di "Mi Piace"
@@ -78,32 +72,35 @@ class CommentiController {
         return $esito;
     }
 
-    // Metodo per registrare un voto (Mi Piace / Non Mi Piace)
-    public function registraVoto($commento_id, $user_id, $voto) {
-        $sql = "SELECT id FROM voti WHERE commento_id = ? AND user_id = ?";
+    // Metodo per ottenere un commento specifico tramite l'ID
+    public function getCommentoById($commento_id) {
+        $sql = "SELECT c.id, c.user_id, c.commento, c.mi_piace, c.non_mi_piace, u.nome 
+                FROM commenti c
+                JOIN utenti u ON c.user_id = u.id
+                WHERE c.id = ?";
+
         $stmt = $this->conn->prepare($sql);
-        $stmt->bind_param('ii', $commento_id, $user_id);
+        $stmt->bind_param('i', $commento_id);
         $stmt->execute();
+
         $result = $stmt->get_result();
-        
-        if ($result->num_rows > 0) {
-            // Se esiste già un voto dell'utente, lo aggiorniamo
-            $stmt->close();
-            $sql = "UPDATE voti SET voto = ? WHERE commento_id = ? AND user_id = ?";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param('sii', $voto, $commento_id, $user_id);
-            $esito = $stmt->execute();
-        } else {
-            // Se non esiste, inseriamo il nuovo voto
-            $stmt->close();
-            $sql = "INSERT INTO voti (commento_id, user_id, voto) VALUES (?, ?, ?)";
-            $stmt = $this->conn->prepare($sql);
-            $stmt->bind_param('iis', $commento_id, $user_id, $voto);
-            $esito = $stmt->execute();
-        }
+        $commento = $result->fetch_assoc();
 
         $stmt->close();
-        return $esito;
+        return $commento;
     }
+    // Metodo per verificare se l'utente ha già votato
+    public function haGiaVotato($commento_id, $user_id) {
+        $sql = "SELECT utenti_votati FROM commenti WHERE id = ?";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bind_param('i', $commento_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $commento = $result->fetch_assoc();
+
+        $utenti_votati = explode(',', $commento['utenti_votati']);
+        return in_array($user_id, $utenti_votati); // Verifica se l'utente ha già votato
+    }
+
 }
 ?>
