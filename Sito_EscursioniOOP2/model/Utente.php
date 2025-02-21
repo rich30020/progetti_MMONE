@@ -8,86 +8,43 @@ class Utente {
         $this->db = ConnessioneDB::getInstance()->getConnessione();
     }
 
-    public function getUserById($userId) {
+    // Verifica se un utente ha già votato per una determinata escursione
+    public function haVotato($userId, $escursioneId) {
         try {
-            $query = "SELECT * FROM utenti WHERE id = ?";
+            $query = "SELECT COUNT(*) AS count FROM voti WHERE user_id = ? AND escursione_id = ?";
             $stmt = $this->db->prepare($query);
             if ($stmt === false) {
                 throw new Exception("Errore nella preparazione della query: " . $this->db->error);
             }
-            $stmt->bind_param("i", $userId);
+            $stmt->bind_param("ii", $userId, $escursioneId);
             $stmt->execute();
             $result = $stmt->get_result();
-            return $result->fetch_assoc();
+            $row = $result->fetch_assoc();
+            return $row['count'] > 0;  // Restituisce true se ha già votato
         } catch (Exception $e) {
-            error_log("Errore nel recupero dell'utente: " . $e->getMessage());
-            return null;
-        }
-    }
-
-    public function updateProfile($userId, $nome, $email, $eta, $livello_esperienza) {
-        try {
-            $query = "UPDATE utenti SET nome = ?, email = ?, eta = ?, livello_esperienza = ? WHERE id = ?";
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Errore nella preparazione della query: " . $this->db->error);
-            }
-
-            $stmt->bind_param('ssiii', $nome, $email, $eta, $livello_esperienza, $userId);
-
-            $stmt->execute();
-
-            return $stmt->affected_rows > 0;
-        } catch (Exception $e) {
-            error_log("Errore nell'aggiornamento del profilo: " . $e->getMessage());
+            error_log("Errore nel controllo del voto: " . $e->getMessage());
             return false;
         }
     }
 
-    public function verificaCredenziali($email) {
+    // Registra il voto dell'utente per una determinata escursione
+    public function registraVoto($userId, $escursioneId, $voto) {
         try {
-            $query = "SELECT * FROM utenti WHERE email = ?";
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Errore nella preparazione della query: " . $this->db->error);
+            // Prima controlliamo se l'utente ha già votato
+            if ($this->haVotato($userId, $escursioneId)) {
+                return false;  // Se l'utente ha già votato, non possiamo registrare il voto
             }
-            $stmt->bind_param("s", $email); 
-            $stmt->execute();
-            $result = $stmt->get_result();
-            return $result->fetch_assoc();
-        } catch (Exception $e) {
-            error_log("Errore nella verifica delle credenziali: " . $e->getMessage());
-            return null;
-        }
-    }
 
-    public function emailEsistente($email) {
-        try {
-            $query = "SELECT COUNT(*) FROM utenti WHERE email = ?";
+            // Inseriamo il voto nella tabella voti
+            $query = "INSERT INTO voti (user_id, escursione_id, voto) VALUES (?, ?, ?)";
             $stmt = $this->db->prepare($query);
             if ($stmt === false) {
                 throw new Exception("Errore nella preparazione della query: " . $this->db->error);
             }
-            $stmt->bind_param("s", $email);
-            $stmt->execute();
-            return $stmt->get_result()->fetchColumn() > 0;
+            $stmt->bind_param("iii", $userId, $escursioneId, $voto);
+            return $stmt->execute();  // Restituisce true se il voto è stato registrato
         } catch (Exception $e) {
-            error_log("Errore nel controllo dell'email esistente: " . $e->getMessage());
-            return false;
-        }
-    }
-
-    public function creaUtente($nome, $email, $password, $eta, $livello_esperienza) {
-        try {
-            $query = "INSERT INTO utenti (nome, email, password, eta, livello_esperienza) VALUES (?, ?, ?, ?, ?)";
-            $stmt = $this->db->prepare($query);
-            if ($stmt === false) {
-                throw new Exception("Errore nella preparazione della query: " . $this->db->error);
-            }
-            $stmt->bind_param('sssii', $nome, $email, $password, $eta, $livello_esperienza);
-            return $stmt->execute();
-        } catch (Exception $e) {
-            error_log("Errore nella creazione dell'utente: " . $e->getMessage());
+            error_log("Errore nel salvataggio del voto: " . $e->getMessage());
             return false;
         }
     }

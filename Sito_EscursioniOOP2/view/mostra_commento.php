@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../Controller/CommentiController.php';
 require_once __DIR__ . '/../Controller/VotoController.php';
+require_once __DIR__ . '/../Model/Utente.php';  // Aggiungi l'importazione per la gestione dell'utente
 
 // Ottieni l'ID dell'escursione da GET
 $escursione_id = filter_input(INPUT_GET, 'escursione_id', FILTER_VALIDATE_INT);
@@ -11,9 +12,14 @@ if ($escursione_id === false || $escursione_id <= 0) {
 }
 
 $commentiController = new CommentiController();
+$votoController = new VotoController();
+$utente = new Utente();
 
 // Ottieni i commenti per l'escursione
 $commenti = $commentiController->getCommenti($escursione_id);
+
+// Recupera l'ID dell'utente loggato
+$user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
 ?>
 
 <!DOCTYPE html>
@@ -24,13 +30,11 @@ $commenti = $commentiController->getCommenti($escursione_id);
     <title>Commenti Escursione</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        /* Aggiungiamo qualche stile per il layout generale */
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f7f7f7;
             color: #333;
         }
-
         .container {
             background-color: #ffffff;
             border-radius: 8px;
@@ -38,119 +42,36 @@ $commenti = $commentiController->getCommenti($escursione_id);
             padding: 30px;
             margin-top: 30px;
         }
-
         h1 {
             color: #3d3d3d;
             font-size: 2em;
             margin-bottom: 20px;
         }
-
         .card {
             border-radius: 10px;
             border: none;
             margin-bottom: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-body {
-            padding: 20px;
-        }
-
-        .card-title {
-            font-size: 1.5em;
-            color: #0056b3;
-            font-weight: 600;
-        }
-
-        .card-text {
-            font-size: 1.1em;
-            line-height: 1.6;
-            color: #555;
-        }
-
         .btn {
             transition: background-color 0.3s ease, transform 0.3s ease;
         }
-
         .btn:hover {
             transform: scale(1.05);
         }
-
         .btn-success {
             background-color: #28a745;
             border-color: #28a745;
         }
-
-        .btn-success:hover {
-            background-color: #218838;
-            border-color: #1e7e34;
-        }
-
         .btn-danger {
             background-color: #dc3545;
             border-color: #dc3545;
         }
-
-        .btn-danger:hover {
-            background-color: #c82333;
-            border-color: #bd2130;
-        }
-
-        .btn-secondary {
-            background-color: #6c757d;
-            border-color: #6c757d;
-        }
-
-        .btn-secondary:hover {
-            background-color: #5a6268;
-            border-color: #545b62;
-        }
-
-        .btn.clicked {
-            transform: scale(1.1);
-            border: 2px solid #000;
-        }
-
         .alert {
             font-size: 1.1em;
             padding: 20px;
             text-align: center;
         }
-
-        /* Aggiungiamo un effetto di fade in per i commenti */
-        .card-body {
-            opacity: 0;
-            animation: fadeIn 0.8s forwards;
-        }
-
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Animazioni per i contatori */
-        .count-up {
-            animation: countUp 0.5s ease-in-out;
-        }
-
-        @keyframes countUp {
-            from {
-                transform: scale(0);
-                opacity: 0;
-            }
-            to {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
     </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
@@ -160,19 +81,26 @@ $commenti = $commentiController->getCommenti($escursione_id);
 
         <?php if ($commenti): ?>
             <?php foreach ($commenti as $commento): ?>
-                <div class="card mb-3" id="commento_<?php echo $commento['id']; ?>">
+                <?php
+                    // Controlla se l'utente ha già votato
+                    $votoUtente = $votoController->getVotoPerCommentoUtente($user_id, $commento['id']);
+                    $votato = $votoUtente !== null;
+                    $miPiaceCount = $votoController->getLikeDislikeCount($commento['id'], 1); // Mi Piace
+                    $nonMiPiaceCount = $votoController->getLikeDislikeCount($commento['id'], -1); // Non Mi Piace
+                ?>
+                <div class="card mb-3" id="commento_<?php echo $commento['id']; ?>" data-commento-id="<?php echo $commento['id']; ?>">
                     <div class="card-body">
                         <h5 class="card-title"><?php echo htmlspecialchars($commento['nome']); ?></h5>
                         <p class="card-text"><?php echo nl2br(htmlspecialchars($commento['commento'])); ?></p>
                         <p><small><?php echo htmlspecialchars($commento['data']); ?></small></p>
 
                         <div class="mt-3">
-                            <p><strong>Mi Piace:</strong> <span id="mi_piace_<?php echo $commento['id']; ?>"><?php echo htmlspecialchars($commento['mi_piace']); ?></span> | 
-                               <strong>Non Mi Piace:</strong> <span id="non_mi_piace_<?php echo $commento['id']; ?>"><?php echo htmlspecialchars($commento['non_mi_piace']); ?></span></p>
+                            <p><strong>Mi Piace:</strong> <span id="mi_piace_<?php echo $commento['id']; ?>"><?php echo $miPiaceCount; ?></span> | 
+                               <strong>Non Mi Piace:</strong> <span id="non_mi_piace_<?php echo $commento['id']; ?>"><?php echo $nonMiPiaceCount; ?></span></p>
 
                             <!-- Pulsante per votare -->
-                            <button class="btn btn-success btn-sm mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>">Mi Piace</button>
-                            <button class="btn btn-danger btn-sm non_mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>">Non Mi Piace</button>
+                            <button class="btn btn-success btn-sm mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>" <?php echo $votato ? 'disabled' : ''; ?>>Mi Piace</button>
+                            <button class="btn btn-danger btn-sm non_mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>" <?php echo $votato ? 'disabled' : ''; ?>>Non Mi Piace</button>
                         </div>
                     </div>
                 </div>
@@ -189,17 +117,6 @@ $commenti = $commentiController->getCommenti($escursione_id);
             var commentoId = $(this).data('commento-id');
             var escursioneId = $(this).data('escursione-id');
 
-            // Se l'utente ha già premuto "Non Mi Piace", disabilita quel bottone
-            if ($('#non_mi_piace_' + commentoId).hasClass('clicked')) {
-                $('#non_mi_piace_' + commentoId).removeClass('clicked');
-                $('#non_mi_piace_' + commentoId).removeClass('btn-danger').addClass('btn-secondary');
-            }
-
-            // Se l'utente ha già premuto "Mi Piace", non fare nulla
-            if ($(this).hasClass('clicked')) {
-                return;
-            }
-
             // Invia la richiesta AJAX per "Mi Piace"
             $.ajax({
                 url: 'aggiungi_like.php',
@@ -215,10 +132,9 @@ $commenti = $commentiController->getCommenti($escursione_id);
                         $('#mi_piace_' + commentoId).text(data.mi_piace);
                         $('#non_mi_piace_' + commentoId).text(data.non_mi_piace);
 
-                        // Aggiorna il bottone "Mi Piace" per evidenziarlo come selezionato
-                        $('.mi_piace_button').removeClass('clicked');
-                        $(this).addClass('clicked');
-                        $(this).removeClass('btn-success').addClass('btn-success clicked');
+                        // Disabilita i pulsanti
+                        $('#commento_' + commentoId).find('.mi_piace_button').prop('disabled', true);
+                        $('#commento_' + commentoId).find('.non_mi_piace_button').prop('disabled', true);
                     } else {
                         alert(data.error);
                     }
@@ -233,17 +149,6 @@ $commenti = $commentiController->getCommenti($escursione_id);
         $('.non_mi_piace_button').on('click', function() {
             var commentoId = $(this).data('commento-id');
             var escursioneId = $(this).data('escursione-id');
-
-            // Se l'utente ha già premuto "Mi Piace", disabilita quel bottone
-            if ($('#mi_piace_' + commentoId).hasClass('clicked')) {
-                $('#mi_piace_' + commentoId).removeClass('clicked');
-                $('#mi_piace_' + commentoId).removeClass('btn-success').addClass('btn-secondary');
-            }
-
-            // Se l'utente ha già premuto "Non Mi Piace", non fare nulla
-            if ($(this).hasClass('clicked')) {
-                return;
-            }
 
             // Invia la richiesta AJAX per "Non Mi Piace"
             $.ajax({
@@ -260,10 +165,9 @@ $commenti = $commentiController->getCommenti($escursione_id);
                         $('#mi_piace_' + commentoId).text(data.mi_piace);
                         $('#non_mi_piace_' + commentoId).text(data.non_mi_piace);
 
-                        // Aggiorna il bottone "Non Mi Piace" per evidenziarlo come selezionato
-                        $('.non_mi_piace_button').removeClass('clicked');
-                        $(this).addClass('clicked');
-                        $(this).removeClass('btn-danger').addClass('btn-danger clicked');
+                        // Disabilita i pulsanti
+                        $('#commento_' + commentoId).find('.mi_piace_button').prop('disabled', true);
+                        $('#commento_' + commentoId).find('.non_mi_piace_button').prop('disabled', true);
                     } else {
                         alert(data.error);
                     }
@@ -274,7 +178,6 @@ $commenti = $commentiController->getCommenti($escursione_id);
             });
         });
     });
-</script>
-
+    </script>
 </body>
 </html>
