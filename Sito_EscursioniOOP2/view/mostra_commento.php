@@ -23,6 +23,135 @@ $commenti = $commentiController->getCommenti($escursione_id);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commenti Escursione</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        /* Aggiungiamo qualche stile per il layout generale */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        h1 {
+            color: #3d3d3d;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            color: #0056b3;
+            font-weight: 600;
+        }
+
+        .card-text {
+            font-size: 1.1em;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .btn {
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .btn.clicked {
+            transform: scale(1.1);
+            border: 2px solid #000;
+        }
+
+        .alert {
+            font-size: 1.1em;
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* Aggiungiamo un effetto di fade in per i commenti */
+        .card-body {
+            opacity: 0;
+            animation: fadeIn 0.8s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Animazioni per i contatori */
+        .count-up {
+            animation: countUp 0.5s ease-in-out;
+        }
+
+        @keyframes countUp {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+    </style>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
