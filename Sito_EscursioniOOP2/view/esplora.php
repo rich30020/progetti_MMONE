@@ -18,15 +18,15 @@ function mostraStelle($bellezza) {
     return str_repeat('⭐', $bellezza);
 }
 
-// Gestione invio commento
+// Invio commento
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['commento']) && isset($_POST['escursione_id'])) {
     $commento = $_POST['commento'];
     $escursione_id = $_POST['escursione_id'];
-    $user_id = $user['id']; // L'ID dell'utente loggato
+    $user_id = $user['id'];
 
     if (!empty($commento)) {
         $commentiController->aggiungiCommento($escursione_id, $user_id, $commento);
-        header("Location: esplora.php"); // Ricarica la pagina per vedere il commento appena aggiunto
+        header("Location: esplora.php");
         exit();
     }
 }
@@ -63,13 +63,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['commento']) && isset(
                                 <?php else: ?>
                                     <p>Nessuna immagine disponibile</p>
                                 <?php endif; ?>
-                                
-                                <!-- Sezione Commenti -->
+
                                 <div class="mt-3">
                                     <a href="mostra_commento.php?escursione_id=<?php echo $escursione['id']; ?>" class="btn btn-secondary">Mostra Commenti</a>
                                 </div>
 
-                                <!-- Form per aggiungere un commento -->
                                 <div class="mt-3">
                                     <form method="post" action="esplora.php">
                                         <input type="hidden" name="escursione_id" value="<?php echo $escursione['id']; ?>">

@@ -8,6 +8,74 @@ class Utente {
         $this->db = ConnessioneDB::getInstance()->getConnessione();
     }
 
+    // Ottieni un utente per ID
+    public function getUserById($userId) {
+        $query = "SELECT id, nome, email, eta, livello_esperienza FROM utenti WHERE id = ?";
+
+        if ($stmt = $this->db->prepare($query)) {
+            $stmt->bind_param("i", $userId);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($row = $result->fetch_assoc()) {
+                return $row;
+            }
+
+            return null; 
+        }
+        return null;
+    }
+
+    // Modifica il profilo di un utente
+    public function updateProfile($userId, $nome, $email, $eta, $livello_esperienza) {
+        $query = "UPDATE utenti SET nome = ?, email = ?, eta = ?, livello_esperienza = ? WHERE id = ?";
+
+        if ($stmt = $this->db->prepare($query)) {
+            $stmt->bind_param("ssisi", $nome, $email, $eta, $livello_esperienza, $userId);
+
+            if ($stmt->execute()) {
+                return true; 
+            }
+
+            return false;
+        }
+        return false;
+    }
+
+    // Verifica se l'email esiste già nel database
+    public function emailEsistente($email) {
+        $query = "SELECT id FROM utenti WHERE email = ?";
+
+        if ($stmt = $this->db->prepare($query)) {
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $stmt->store_result();
+
+            if ($stmt->num_rows > 0) {
+                return true;
+            }
+
+            return false; 
+        }
+        return false;
+    }
+
+    // Crea un nuovo utente nel database
+    public function creaUtente($nome, $email, $password, $eta, $livello_esperienza) {
+        $query = "INSERT INTO utenti (nome, email, password, eta, livello_esperienza) VALUES (?, ?, ?, ?, ?)";
+
+        if ($stmt = $this->db->prepare($query)) {
+            $stmt->bind_param("ssssi", $nome, $email, $password, $eta, $livello_esperienza);
+
+            if ($stmt->execute()) {
+                return true; 
+            }
+
+            return false; 
+        }
+        return false; 
+    }
+
     // Verifica se un utente ha già votato per una determinata escursione
     public function haVotato($userId, $escursioneId) {
         try {
@@ -20,7 +88,7 @@ class Utente {
             $stmt->execute();
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
-            return $row['count'] > 0;  // Restituisce true se ha già votato
+            return $row['count'] > 0;
         } catch (Exception $e) {
             error_log("Errore nel controllo del voto: " . $e->getMessage());
             return false;
@@ -30,9 +98,8 @@ class Utente {
     // Registra il voto dell'utente per una determinata escursione
     public function registraVoto($userId, $escursioneId, $voto) {
         try {
-            // Prima controlliamo se l'utente ha già votato
             if ($this->haVotato($userId, $escursioneId)) {
-                return false;  // Se l'utente ha già votato, non possiamo registrare il voto
+                return false; 
             }
 
             // Inseriamo il voto nella tabella voti
@@ -59,7 +126,7 @@ class Utente {
             $stmt->bind_param("s", $email);
             $stmt->execute();
             $result = $stmt->get_result();
-            return $result->fetch_assoc(); // Restituisce l'array con i dati dell'utente o NULL se non trovato
+            return $result->fetch_assoc();
         } catch (Exception $e) {
             error_log("Errore nella verifica delle credenziali: " . $e->getMessage());
             return null;

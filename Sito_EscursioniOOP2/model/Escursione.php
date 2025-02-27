@@ -7,7 +7,7 @@ class Escursione {
     private $conn;
 
     public function __construct() {
-        $this->conn = ConnessioneDB::getInstance()->getConnessione(); // Ottieni la connessione singleton
+        $this->conn = ConnessioneDB::getInstance()->getConnessione();
     }
 
     public function getAllEscursioni() {

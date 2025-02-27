@@ -5,16 +5,14 @@ if (session_status() == PHP_SESSION_NONE) {
 
 // Verifica se è stato inviato il modulo
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ottieni i dati dal modulo
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Include il file di connessione al DB
     require_once __DIR__ . '/Controller/LoginController.php'; 
     $loginController = new LoginController();
     $errore = $loginController->login($email, $password); // Esegui il login
 
-    // Se il login è riuscito, reindirizza al principale
+    // Se login riuscito -> pagina principale
     if (!$errore) {
         header('Location: index.php');
         exit();
@@ -28,11 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <title>Login</title>
     <link rel="stylesheet" href="view/main.css">
-
-    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Custom CSS -->
     <style>
         body {
             font-family: 'Arial', sans-serif;
