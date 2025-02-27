@@ -84,6 +84,9 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                     // Recupera i contatori "Mi Piace" e "Non Mi Piace" dal database
                     $miPiaceCount = $votoController->getLikeDislikeCount($commento['id'], 1); // Mi Piace
                     $nonMiPiaceCount = $votoController->getLikeDislikeCount($commento['id'], -1); // Non Mi Piace
+                
+                    // Controlla se l'utente ha già votato (1 = Mi Piace, -1 = Non Mi Piace, 0 = non ha votato)
+                    $userVote = isset($_SESSION['user_id']) ? $votoController->getUserVote($_SESSION['user_id'], $commento['id']) : 0;
                 ?>
                 <div class="card mb-3" id="commento_<?php echo $commento['id']; ?>" data-commento-id="<?php echo $commento['id']; ?>">
                     <div class="card-body">
@@ -96,8 +99,18 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                                <strong>Non Mi Piace:</strong> <span id="non_mi_piace_<?php echo $commento['id']; ?>"><?php echo $nonMiPiaceCount; ?></span></p>
 
                             <!-- Pulsante per votare -->
-                            <button class="btn btn-success btn-sm mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>">Mi Piace</button>
-                            <button class="btn btn-danger btn-sm non_mi_piace_button" data-commento-id="<?php echo $commento['id']; ?>" data-escursione-id="<?php echo $escursione_id; ?>">Non Mi Piace</button>
+                            <button class="btn btn-success btn-sm mi_piace_button <?php echo ($userVote != 0) ? 'disabled' : ''; ?>" 
+                                    data-commento-id="<?php echo $commento['id']; ?>" 
+                                    data-escursione-id="<?php echo $escursione_id; ?>"
+                                    <?php echo ($userVote != 0) ? 'disabled' : ''; ?>>
+                                Mi Piace
+                            </button>
+                            <button class="btn btn-danger btn-sm non_mi_piace_button <?php echo ($userVote != 0) ? 'disabled' : ''; ?>" 
+                                    data-commento-id="<?php echo $commento['id']; ?>" 
+                                    data-escursione-id="<?php echo $escursione_id; ?>"
+                                    <?php echo ($userVote != 0) ? 'disabled' : ''; ?>>
+                                Non Mi Piace
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -129,6 +142,9 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                         // Aggiorna i contatori
                         $('#mi_piace_' + commentoId).text(data.mi_piace);
                         $('#non_mi_piace_' + commentoId).text(data.non_mi_piace);
+                        // Disabilita entrambi i pulsanti
+                        $('.mi_piace_button[data-commento-id="' + commentoId + '"]').prop('disabled', true);
+                        $('.non_mi_piace_button[data-commento-id="' + commentoId + '"]').prop('disabled', true);
                     } else {
                         alert(data.error);
                     }
@@ -158,6 +174,9 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
                         // Aggiorna i contatori
                         $('#mi_piace_' + commentoId).text(data.mi_piace);
                         $('#non_mi_piace_' + commentoId).text(data.non_mi_piace);
+                        // Disabilita entrambi i pulsanti
+                        $('.mi_piace_button[data-commento-id="' + commentoId + '"]').prop('disabled', true);
+                        $('.non_mi_piace_button[data-commento-id="' + commentoId + '"]').prop('disabled', true);
                     } else {
                         alert(data.error);
                     }
@@ -169,5 +188,6 @@ $user_id = isset($_SESSION['user_id']) ? $_SESSION['user_id'] : null;
         });
     });
     </script>
+
 </body>
 </html>

@@ -48,5 +48,24 @@ class Utente {
             return false;
         }
     }
+
+    public function verificaCredenziali($email) {
+        try {
+            $query = "SELECT * FROM utenti WHERE email = ?";
+            $stmt = $this->db->prepare($query);
+            if ($stmt === false) {
+                throw new Exception("Errore nella preparazione della query: " . $this->db->error);
+            }
+            $stmt->bind_param("s", $email);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            return $result->fetch_assoc(); // Restituisce l'array con i dati dell'utente o NULL se non trovato
+        } catch (Exception $e) {
+            error_log("Errore nella verifica delle credenziali: " . $e->getMessage());
+            return null;
+        }
+    }
+    
+
 }
 ?>

@@ -102,5 +102,7 @@ class CommentiController {
         return in_array($user_id, $utenti_votati); // Verifica se l'utente ha già votato
     }
 
+    
+
 }
 ?>
