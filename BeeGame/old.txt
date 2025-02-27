@@ -1,0 +1,104 @@
+/*require_once "bee_game.php";
+    session_start();
+
+    $_SESSION["game_state"];
+    $_SESSION["round"];
+
+    if(empty($_SESSION["game_state"])){
+        $_SESSION["game_state"]= init_game();
+    }
+
+    if(empty($_SESSION["round"])){
+        $_SESSION["round"]= 0;
+    }
+
+    if(isset($_POST['HIT'])){
+        $_SESSION["game_state"][$_POST['HIT']]->hit();
+    }elseif(isset($_POST['RESTART'])){
+        $_SESSION["game_state"]= init_game();
+    }
+
+    check_death($_SESSION["game_state"]);
+
+    $victory = check_victory($_SESSION["game_state"]);
+
+    if($victory) {
+        $_SESSION["round"]++;
+        $_SESSION["game_state"] = null;
+    }*/
+
+
+<?php
+
+require_once "models/BeeHive.php";
+session_start();
+
+if (!isset($_SESSION["BeeHive"])) {
+    $_SESSION["BeeHive"] = new BeeHive(1);
+}
+
+if (!isset($_SESSION["round"])) {
+    $_SESSION["round"] = 0;
+}
+
+if (isset($_POST['HIT'])) {
+    if ($_POST['HIT'] === 'RANDOM') {
+        $_SESSION["BeeHive"]->hive[array_rand($_SESSION["BeeHive"]->hive)]->hit();
+    } else {
+        $_SESSION["BeeHive"]->hive[$_POST['HIT']]->hit();
+    }
+} elseif (isset($_POST['RESTART'])) {
+    $_SESSION["BeeHive"] = new BeeHive(1);
+}
+
+$_SESSION["BeeHive"]->check_death();
+$victory = $_SESSION["BeeHive"]->check_victory();
+
+if ($victory) $_SESSION["round"]++
+
+
+?>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>BeeGame</title>
+    <!-- <link rel="stylesheet" href="index.css"> -->
+</head>
+
+<body>
+    <?php
+    if ($victory) {
+        echo "<h1>Round " . $_SESSION["round"] - 1 . " Cleared</h1>";
+        echo "<h2>Victory</h2>";
+    } else {
+        echo "<h1>Round: " . $_SESSION["round"] . "</h1>";
+    }
+    ?>
+    <form action="index.php" method="POST">
+        <div class="hive">
+            <?php
+            if (!$victory) {
+                foreach ($_SESSION["BeeHive"]->hive as $i => $bee) {
+                    require "components/bee_component.php";
+                }
+            }
+            ?>
+        </div>
+        <?php
+        if ($victory) {
+            echo '
+                    <button type="submit" name="RESTART">NEW ROUND</button>
+                ';
+        } else {
+            echo '
+                    <button type="submit" name="HIT" value="RANDOM">RANDOM HIT</button>
+                ';
+        }
+        ?>
+    </form>
+
+</body>
+
+</html>

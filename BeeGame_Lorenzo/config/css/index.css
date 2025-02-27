@@ -1,0 +1,187 @@
+html {
+    height: 100vh;
+}
+
+body {
+    margin-top: 20px;
+    background-image: url('https://miro.medium.com/v2/resize:fit:1000/1*nbjNPvUi0OAw-6e2VXPwqw.jpeg');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+}
+
+body.game {
+    background-color: rgb(21, 17, 6);
+    background-image: none;
+    color: white;
+}
+
+.btn-custom {
+    background-color: #ffc107;
+    color: black;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+    margin-top: 20pxx;
+}
+
+.btn-custom:hover {
+    background-color: #f0ab00;
+    color: black;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
+}
+
+.btn-custom:active {
+    background-color: #c08901 !important;
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+.custom-container {
+    text-align: center;
+    align-items: center;
+    margin-top: 10%;
+    padding: 30px;
+    background-color: rgb(21, 17, 6);
+
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.game-container {
+    margin-top: 20px;
+    text-align: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    padding: 30px;
+    background-color: rgb(21, 17, 6);
+    border-radius: 1rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+}
+
+.form-control {
+    background-color: #453c28;
+    border: 1px solid #ffc107;
+    color: white;
+}
+
+.form-control:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.form-check-input {
+    background-color: #453c28;
+    border: 1px solid #ffc107;
+}
+
+.form-check-input:checked {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.list-group {
+    width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.list-group-item:first-child{
+    margin-top: 20px;
+}
+
+.list-group-item {
+    background-color: #695936;
+    color: white;
+    border-color:#ffc107;
+    display: flex;
+    align-content: center;
+}
+
+.game-id{
+    flex-grow: 1;
+    width: 10px;
+}
+
+.hive-difficulty{
+    flex-grow: 7;
+    text-align: left;
+}
+
+.btn-action{
+    flex-grow: 2;
+    padding: 0px;
+}
+
+.btn-action>svg {
+    height: 10px;
+    width: 10px;
+    margin-bottom: 3px;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+h2 {
+    margin-bottom: 10px;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+    height: 120px;
+    width: 120px;
+    padding-top: 20px;
+}
+
+/* Overlay nascosto di default */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Mostra overlay al passaggio del mouse */
+.image-container:hover .overlay {
+    opacity: 1;
+}
+
+.image-container:active .overlay {
+    opacity: 1;
+    background-color: rgba(255, 220, 144, 0.475);
+}
+
+/* Icona della spada */
+.overlay img {
+    width: 100px;
+    height: 100px;
+}
+
+.bees-container{
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.bee-container{
+    width: 30%;
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    padding-top: 20px;
+}
