@@ -2,7 +2,7 @@
 
 namespace App\Views;
 
-session_start();
+\session_start();
 
 use App\Controllers\BeeGameController;
 use App\Models\Hive;

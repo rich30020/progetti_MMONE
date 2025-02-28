@@ -2,8 +2,7 @@
 
 namespace App\Models;
 
-require_once dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'DBConfig.php';
-
+require_once dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'DBConfig.php';
 
 use Config\DBConfig;
 use PDO;
@@ -15,10 +14,9 @@ class MySql extends DBConfig
     public $dataSet;
     private ?string $sqlQuery;
 
-    protected string $databaseName;
-    protected string $hostName;
-    protected string $userName;
-    //protected $userPassword;
+    protected string $databaseName = "";
+    protected string $hostName = "";
+    protected string $userName = "";
 
     public function __construct()
     {
@@ -27,27 +25,26 @@ class MySql extends DBConfig
         $this->dataSet = NULL;
 
         $dbParams = new DBConfig();
-        $this->databaseName = $dbParams->dbName;
-        $this->hostName = $dbParams->serverName;
-        $this->userName = $dbParams->userName;
+        $this->databaseName = (string) $dbParams->dbName;
+        $this->hostName = (string) $dbParams->serverName;
+        $this->userName = (string) $dbParams->userName;
         $dbParams = NULL;
     }
 
-    public function dbConnect()
+    public function dbConnect(): PDO
     {
         $this->connection = new PDO("mysql:host=$this->hostName;dbname=$this->databaseName", $this->userName);
         return $this->connection;
     }
 
-    public function dbDisconnect()
+    public function dbDisconnect(): void
     {
         $this->connection = NULL;
         $this->sqlQuery = NULL;
         $this->dataSet = NULL;
-        $this->databaseName = NULL;
-        $this->hostName = NULL;
-        $this->userName = NULL;
-        //$this -> passCode = NULL;
+        $this->databaseName = "";
+        $this->hostName = "";
+        $this->userName = "";
     }
 
     public function selectAll(string $tableName)
@@ -74,6 +71,7 @@ class MySql extends DBConfig
             return $response;
         }
     }
+
     public function delete(string $query)
     {
         $this->sqlQuery = $query;
@@ -84,8 +82,8 @@ class MySql extends DBConfig
         }
         $this->sqlQuery = NULL;
         return $this->dataSet;
-
     }
+
     public function update(string $query)
     {
         $this->sqlQuery = $query;
@@ -97,15 +95,16 @@ class MySql extends DBConfig
         $this->sqlQuery = NULL;
         return $this->dataSet;
     }
+
     public function insert(string $query): int
     {
         $this->sqlQuery = $query;
         try {
             $this->dataSet = $this->connection->exec($this->sqlQuery);
-        }catch (PDOException $e) {
+        } catch (PDOException $e) {
             return -1;
         }
         $this->sqlQuery = NULL;
-        return $this->connection->lastInsertId();
+        return (int) $this->connection->lastInsertId();
     }
 }

@@ -18,11 +18,12 @@ use App\Models\Bee;
 
 class BeeGameController
 {
-    //creates a new User in the database from an input string and returns the User
+    // Crea un nuovo utente nel database a partire da una stringa di input e restituisce l'utente
     public function newUser(string $name)
     {
         $user = new User();
         $id = $user->create($name);
+
         if ($id == -1) {
             $user->setId(-1);
             return $user;
@@ -31,7 +32,8 @@ class BeeGameController
             return $user;
         }
     }
-    //creates a new Hive in the database from an input string and returns the Hive
+
+    // Crea un nuovo alveare nel database a partire da una stringa di difficoltà e restituisce l'alveare
     public function newHive(string $difficulty): Hive
     {
         $hive = new Hive();
@@ -39,13 +41,15 @@ class BeeGameController
         $hive->read($id);
         return $hive;
     }
-    //creates a new BeeType in the database from inputs: name(string), max health(int), damage taken(int), image link(nullable string)
+
+    // Crea un nuovo tipo di ape nel database con i parametri forniti
     public function newBeeType(string $name, int $maxHealth, int $damage, ?string $image): void
     {
         $beeType = new BeeType();
-        $beeType->create($name, $maxHealth, $damage, $image);
+        $beeType->create($name, $maxHealth, $damage);
     }
-    //creates the layout of bees in the database necessary for the hive from an input Hive and an array for the structure
+
+    // Crea il layout delle api nel database necessario per l'alveare, partendo da un Hive e da una struttura di layout
     public function newHiveLayout(Hive $hive, array $layout): void
     {
         /*
@@ -64,13 +68,16 @@ class BeeGameController
             $hiveLayout->create($beeType, $hive, $beesCount);
         }
     }
-    //creates a new Game in the database from a Hive and a User input
+
+    // Crea un nuovo gioco nel database a partire da un alveare e un utente
     public function newGame(Hive $hive, User $user): Game
     {
         $game = new Game();
         $game->create(0, 3, $user, $hive);
+
         $hiveLayout = new HiveLayout();
         $hiveLayouts = $hiveLayout->readAllByHiveId($hive->getId());
+
         foreach ($hiveLayouts as $layoutRow) {
             for ($i = 1; $i <= $layoutRow['bees_count']; $i++) {
                 $bee = new Bee();
@@ -79,31 +86,23 @@ class BeeGameController
                 $bee->create($beeType, $game);
             }
         }
+
         return $game;
     }
-    //returns an associative array containig of all the Bees' ids from an input Game
-    /*
-        example return array :
-        [
-            ['id'] => 1,
-            ['id'] => 2,
-            ...
-        ]
-    */
-    //this array can then be used to read all the bees' data
+
+    // Restituisce un array associativo contenente gli id di tutte le api di un gioco dato
     public function fetchGamesBees(Game $game): array
     {
         $bee = new Bee();
-        $bees = $bee->readAllByGameId($game->getId());
-        return $bees;
+        return $bee->readAllByGameId($game->getId());
     }
-    //returns the User in the database from the input userName(string)
-    //there can only be a User with a unique username due to database constraints
-    //return a user with id = -1 in the case that the input username is not present in the database
+
+    // Restituisce l'utente nel database a partire dal nome utente
     public function fetchUserByUsername(string $userName)
     {
         $user = new User();
-        $error = $user -> readByUsername($userName);
+        $error = $user->readByUsername($userName);
+
         if ($error == -1) {
             $user->setId(-1);
             return $user;
@@ -111,45 +110,48 @@ class BeeGameController
             return $user;
         }
     }
-    //returns an associative array of all the games with the camp user_id equals to the id of the input User
+
+    // Restituisce un array associativo di tutti i giochi con l'ID utente uguale a quello dell'utente dato
     public function fetchGamesByUser(User $user)
     {
         $game = new Game();
-        $games = $game->readAllByUserId($user->getId());
-        return $games;
+        return $game->readAllByUserId($user->getId());
     }
-    //returns all the hives of the database
+
+    // Restituisce tutti gli alveari nel database
     public function fetchAllHives(): array
     {
         $hive = new Hive();
-        $hives = $hive->readAllHives();
-        return $hives;
+        return $hive->readAllHives();
     }
-    //returns an associative array containing the game object, the hive id and the bees' id array
+
+    // Restituisce un array contenente l'oggetto del gioco, l'ID dell'alveare e l'array degli id delle api
     public function loadGame(Game $game): array
     {
         $hive = new Hive();
         $hive->read($game->getHive()->getId());
+
         $bee = new Bee();
         $bees = $bee->readAllByGameId($game->getId());
-        return['game' => $game, 'hive' => $hive, 'bees' => $bees];
+
+        return ['game' => $game, 'hive' => $hive, 'bees' => $bees];
     }
-    //updates the bees with an input game and array of bees object
-    //if the array of bees return false to notify the failure of the saving procedure
-    //when the array of bees is not empty it updates the bees with the game_id equals to the input game's id
-    //with the new current health and then it updates the game to the new game state if it mutated
+
+    // Aggiorna le api con un gioco dato e un array di oggetti api
+    // Se l'array di api è vuoto, restituisce false per notificare il fallimento della procedura di salvataggio
     public function saveGame(Game $game, array $bees): bool
     {
-        if(empty($bees)){
+        if (empty($bees)) {
             return false;
-        }else{
+        } else {
             $game->updateBees($bees);
         }
+
         $game->updateGame();
         return true;
     }
-    //DEPRECATED:
-    //old function that checked the vitory state in the old static version of the game
+
+    // DEPRECATED: Vecchia funzione che verificava lo stato di vittoria nella vecchia versione statica del gioco
     public function checkVictory(array $bees): bool
     {
         $victory = true;
@@ -160,16 +162,21 @@ class BeeGameController
         }
         return $victory;
     }
-    //old function that prepared the new round after victory in the old static version of the game
+
+    // Vecchia funzione che preparava il nuovo round dopo la vittoria nella vecchia versione statica del gioco
     public function newRound(Game $game, array $bees)
     {
-        $hive=$game->getHive();
+        $hive = $game->getHive();
         $hiveLayout = new HiveLayout();
         $hiveLayouts = $hiveLayout->readAllByHiveId($hive->getId());
+
+        // Resetta la salute delle api
         foreach ($bees as $bee) {
             $bee->setCurrentHealth(0);
         }
+
         $this->saveGame($game, $bees);
+
         $bees = [];
         foreach ($hiveLayouts as $layoutRow) {
             for ($i = 1; $i <= $layoutRow['bees_count']; $i++) {
@@ -180,8 +187,11 @@ class BeeGameController
                 $bees[] = $bee;
             }
         }
+
+        // Incrementa il round
         $round = $game->getRound() + 1;
         $game->setRound($round);
-        return(['game'=>$game, 'bees'=>$bees]);
+
+        return ['game' => $game, 'bees' => $bees];
     }
 }

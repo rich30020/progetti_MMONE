@@ -21,11 +21,13 @@ use App\Controllers\BeeGameController;
 
 $controller = new BeeGameController();
 
+// Leggi i dati inviati via JSON (php://input)
 $data = json_decode(file_get_contents('php://input'), true);
+
 if (!$data) {
     echo json_encode(['success' => false, 'message' => 'Nessun dato JSON ricevuto.']);
     exit;
-} 
+}
 
 if (isset($data['game']) && isset($data['bees'])) {
     // Funzione per salvare il gioco
@@ -33,38 +35,47 @@ if (isset($data['game']) && isset($data['bees'])) {
     $game->setId($data['game']['id']);
     $game->setRound($data['game']['round']);
     $game->setLives($data['game']['lives']);
+    
     $user = new User();
     $user->read($data['game']['user_id']);
+    
     $hive = new Hive();
     $hive->read($data['game']['hive_id']);
+    
     $game->setUser($user);
     $game->setHive($hive);
 
     $bees = [];
-    $noalive = true;
+    $noAlive = true;  // Flag per verificare se ci sono api vive
     foreach ($data['bees'] as $beeJS) {
         $bee = new Bee();
         $bee->setId($beeJS['id']);
         $bee->setCurrentHealth($beeJS['currentHealth']);
+        
         $beeType = new BeeType();
         $beeType->read($beeJS['beeType']);
+        
         $bee->setBeeType($beeType);
         $bee->setGame($game);
         $bees[] = $bee;
+        
         if ($bee->getCurrentHealth() > 0) {
-            $noalive = false;
+            $noAlive = false;
         }
     }
-    if($game->getLives() <= 0) {
-        $noalive = true;
+
+    if ($game->getLives() <= 0) {
+        $noAlive = true;
     }
 
-    // Se non ci sono più api vive, crea un nuovo round
-    if ($noalive) {
+    // Se non ci sono api vive, crea un nuovo round
+    if ($noAlive) {
         $newRound = $controller->newRound($game, $bees);
+        
         if ($newRound) {
             $game = $newRound['game'];
             $bees = $newRound['bees'];
+            
             if ($controller->saveGame($game, $bees)) {
                 $response['game'] = [
                     'id' => $game->getId(),
@@ -73,6 +84,7 @@ if (isset($data['game']) && isset($data['bees'])) {
                     'user_id' => $game->getUser()->getId(),
                     'hive_id' => $game->getHive()->getId()
                 ];
+                
                 foreach ($bees as $bee) {
                     $response['bees'][] = [
                         'id' => $bee->getId(),
@@ -81,6 +93,7 @@ if (isset($data['game']) && isset($data['bees'])) {
                         'damage' => $bee->getBeeType()->getDamage()
                     ];
                 }
+                
                 $response['success'] = true;
                 echo json_encode($response);
             } else {
@@ -97,6 +110,7 @@ if (isset($data['game']) && isset($data['bees'])) {
             'user_id' => $game->getUser()->getId(),
             'hive_id' => $game->getHive()->getId()
         ];
+        
         foreach ($bees as $bee) {
             $response['bees'][] = [
                 'id' => $bee->getId(),
@@ -105,12 +119,13 @@ if (isset($data['game']) && isset($data['bees'])) {
                 'damage' => $bee->getBeeType()->getDamage()
             ];
         }
+        
         $response['success'] = true;
         echo json_encode($response);
     } else {
         echo json_encode(['success' => false, 'message' => 'Errore nel salvataggio del gioco.']);
     }
-} else if (isset($data['action']) && isset($data['username'])) {
+} elseif (isset($data['action']) && isset($data['username'])) {
     // Funzione per registrare o fare login
     switch ($data['action']) {
         case "register":
