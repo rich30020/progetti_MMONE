@@ -42,7 +42,7 @@ if (isset($_POST['save'])) {
         $bee->setCurrentHealth($beeCH);
         $bees[$beeId] = $bee;
     }
-    $controller->saveGame($game, $bees, $originalBees);
+    $controller->saveGame($game, $bees);
     foreach ($_SESSION['bees'] as $beeId => $beeCH) {
         unset($_SESSION['bees'][$beeId]);
         unset($_SESSION['originalBees'][$beeId]);

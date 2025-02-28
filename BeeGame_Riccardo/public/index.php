@@ -1,7 +1,5 @@
 <?php
 session_start();
-//session_destroy();
-//session_reset();
 
 use App\Controllers\BeeGameController;
 
@@ -14,11 +12,18 @@ $auth = false;
 if (isset($_SESSION['user_id'])) {
     $auth = true;
 } else {
-    if(!empty($_POST)){
+    // Se la sessione non esiste, prova a registrare un nuovo utente
+    if (!empty($_POST)) {
         $_SESSION['user_id'] = $controller->newUser($_POST['username']);
         $auth = true;
     }
-};
+}
+
+// Se l'utente è autenticato, redirigilo alla pagina di gioco
+if ($auth) {
+    header("Location: ../app/views/select-game.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
