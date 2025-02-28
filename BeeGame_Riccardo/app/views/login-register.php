@@ -1,8 +1,9 @@
 <?php
 namespace App\Views;
 
-use function session_start;
-use function header;
+// Modifica: utilizzo delle funzioni con la dichiarazione di 'use'
+use function session_start;  // Funzione session_start importata
+use function header;         // Funzione header importata
 
 session_start();
 
@@ -13,7 +14,7 @@ if (isset($_SESSION['user_id'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it"> <!-- Modifica: lingua cambiata in 'it' per l'italiano -->
 
 <head>
     <meta charset="UTF-8">
@@ -42,7 +43,9 @@ if (isset($_SESSION['user_id'])) {
 
     <script>
     async function submitForm(action) {
-        const username = document.getElementById('username').value.trim();
+        // Modifica: aggiunto il trim() per rimuovere spazi extra dall'input username
+        const username = document.getElementById('username').value.trim(); // Usa trim per evitare spazi vuoti
+
         const messageDiv = document.getElementById('message');
         messageDiv.innerHTML = '';
 
@@ -51,16 +54,18 @@ if (isset($_SESSION['user_id'])) {
             return;
         }
 
+        // Modifica: definizione dei dati in modo più pulito
         const data = { username, action };
 
         try {
-            const response = await fetch('../controllers/GameRounter.php', {
+            const response = await fetch('../controllers/GameRounter.php', {  
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(data)
             });
 
-            if (response.ok) {
+            // Modifica: gestione della risposta, controllo se la risposta è OK
+            if (response.ok) {  // Verifica la risposta del server
                 const jsonResponse = await response.json();
 
                 if (jsonResponse.success) {

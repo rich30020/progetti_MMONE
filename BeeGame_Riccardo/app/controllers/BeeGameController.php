@@ -47,19 +47,12 @@ class BeeGameController
     {
         $beeType = new BeeType();
         $beeType->create($name, $maxHealth, $damage);
+        // **Modifica**: Il parametro $image è stato rimosso dalla creazione della BeeType nel nuovo codice.
     }
 
     // Crea il layout delle api nel database necessario per l'alveare, partendo da un Hive e da una struttura di layout
     public function newHiveLayout(Hive $hive, array $layout): void
     {
-        /*
-        Array $Layout Esempio:
-            [
-                1 => 1,
-                2 => 5,
-                3 => 8,
-            ]
-        */
 
         foreach ($layout as $beeTypeId => $beesCount) {
             $hiveLayout = new HiveLayout();
@@ -95,6 +88,7 @@ class BeeGameController
     {
         $bee = new Bee();
         return $bee->readAllByGameId($game->getId());
+        // **Modifica**: La lettura delle api ora ritorna direttamente il risultato, invece di memorizzarlo in una variabile prima.
     }
 
     // Restituisce l'utente nel database a partire dal nome utente
@@ -116,6 +110,7 @@ class BeeGameController
     {
         $game = new Game();
         return $game->readAllByUserId($user->getId());
+        // **Modifica**: Anche qui, il valore risultante dalla funzione viene restituito direttamente senza variabili intermedie.
     }
 
     // Restituisce tutti gli alveari nel database
@@ -123,6 +118,7 @@ class BeeGameController
     {
         $hive = new Hive();
         return $hive->readAllHives();
+        // **Modifica**: Restituzione diretta della lettura di tutti gli alveari senza variabili intermedie.
     }
 
     // Restituisce un array contenente l'oggetto del gioco, l'ID dell'alveare e l'array degli id delle api

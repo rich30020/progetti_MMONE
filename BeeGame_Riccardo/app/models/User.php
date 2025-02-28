@@ -9,7 +9,8 @@ class User
     protected int $id;
     protected string $userName;
 
-    // Funzione per connettersi al DB e restituire l'oggetto MySql
+    // **Modifica**: Aggiunto il metodo privato dbConnect() per evitare ripetizioni
+    // del codice di connessione al database in più metodi
     private function dbConnect(): MySql
     {
         $mysql = new MySql();
@@ -37,12 +38,13 @@ class User
         $this->userName = $userName;
     }
 
-    // Crea un nuovo utente e restituisce l'ID dell'utente creato o -1 in caso di errore
+    // **Modifica**: La funzione create() ora verifica prima se l'utente esiste già
+    // nel database. Se esiste, ritorna -1 senza tentare di inserirlo di nuovo.
     public function create(string $userName): int
     {
         $mysql = $this->dbConnect(); // Usato il metodo dbConnect() per evitare ripetizioni
 
-        // Verifica se l'utente esiste già prima di crearlo
+        // **Modifica**: Verifica se l'utente esiste già prima di tentare l'inserimento
         $checkQuery = "SELECT id FROM `users` WHERE user_name = '$userName'";
         $result = $mysql->query($checkQuery);
 
@@ -63,7 +65,8 @@ class User
         return $this->getId();
     }
 
-    // Legge un utente tramite il suo ID
+    // **Modifica**: La funzione read() ora gestisce il caso in cui l'utente non venga trovato
+    // e imposta l'ID a -1 per indicare l'assenza dell'utente.
     public function read(int $id): void
     {
         $mysql = $this->dbConnect(); // Usato il metodo dbConnect() per evitare ripetizioni
@@ -78,7 +81,8 @@ class User
         }
     }
 
-    // Legge un utente tramite il nome utente
+    // **Modifica**: La funzione readByUsername() ora restituisce null se l'utente non viene trovato
+    // anziché non fare nulla, rendendo il comportamento più chiaro.
     public function readByUsername(string $userName): ?User
     {
         $mysql = $this->dbConnect(); // Usato il metodo dbConnect() per evitare ripetizioni

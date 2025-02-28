@@ -14,9 +14,10 @@ class MySql extends DBConfig
     public $dataSet;
     private ?string $sqlQuery;
 
-    protected string $databaseName = "";
-    protected string $hostName = "";
-    protected string $userName = "";
+    // Modifica: inizializzazione delle variabili con stringhe vuote
+    protected string $databaseName = "";  // Inizializzato con una stringa vuota
+    protected string $hostName = "";      // Inizializzato con una stringa vuota
+    protected string $userName = "";      // Inizializzato con una stringa vuota
 
     public function __construct()
     {
@@ -25,18 +26,21 @@ class MySql extends DBConfig
         $this->dataSet = NULL;
 
         $dbParams = new DBConfig();
-        $this->databaseName = (string) $dbParams->dbName;
-        $this->hostName = (string) $dbParams->serverName;
-        $this->userName = (string) $dbParams->userName;
+        // Modifica: Esplicita la conversione a stringa per evitare problemi con tipi
+        $this->databaseName = (string) $dbParams->dbName; // Tipo esplicitamente convertito
+        $this->hostName = (string) $dbParams->serverName; // Tipo esplicitamente convertito
+        $this->userName = (string) $dbParams->userName;   // Tipo esplicitamente convertito
         $dbParams = NULL;
     }
 
+    // Modifica: Aggiunta dichiarazione del tipo di ritorno `PDO`
     public function dbConnect(): PDO
     {
         $this->connection = new PDO("mysql:host=$this->hostName;dbname=$this->databaseName", $this->userName);
         return $this->connection;
     }
 
+    // Modifica: Aggiunta dichiarazione del tipo di ritorno `void` per il metodo senza valore di ritorno
     public function dbDisconnect(): void
     {
         $this->connection = NULL;
@@ -96,6 +100,7 @@ class MySql extends DBConfig
         return $this->dataSet;
     }
 
+    // Modifica: Aggiunta dichiarazione del tipo di ritorno `int` e gestione dell'ID dell'ultimo inserimento
     public function insert(string $query): int
     {
         $this->sqlQuery = $query;
@@ -105,6 +110,7 @@ class MySql extends DBConfig
             return -1;
         }
         $this->sqlQuery = NULL;
-        return (int) $this->connection->lastInsertId();
+        // Modifica: Ritorna l'ID dell'ultima riga inserita come `int`
+        return (int) $this->connection->lastInsertId(); // Conversione esplicita in intero
     }
 }

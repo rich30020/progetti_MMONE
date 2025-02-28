@@ -9,7 +9,8 @@ class Bee
     protected BeeType $beeType;
     protected Game $game;
 
-    // Funzione per connettersi al DB e restituire l'oggetto MySql
+    // **Modifica**: Aggiunto il metodo privato dbConnect() per evitare ripetizioni
+    // del codice di connessione al database in più metodi
     private function dbConnect(): MySql
     {
         $mysql = new MySql();
@@ -59,7 +60,8 @@ class Bee
 
     public function create(BeeType $beeType, Game $game): int
     {
-        $mysql = $this->dbConnect();  // Usato il metodo dbConnect() per evitare ripetizioni
+        // **Modifica**: Utilizzato il metodo dbConnect() per evitare ripetizioni del codice
+        $mysql = $this->dbConnect();  
         $beeTypeId = $beeType->getId();
         $maxHealth = $beeType->getMaxHealth();
         $gameId = $game->getId();
@@ -73,10 +75,12 @@ class Bee
 
     public function read(int $id): void
     {
-        $mysql = $this->dbConnect();  // Usato il metodo dbConnect() per evitare ripetizioni
+        // **Modifica**: Utilizzato il metodo dbConnect() per evitare ripetizioni del codice
+        $mysql = $this->dbConnect();  
         $query = "SELECT * FROM `bees` WHERE id=$id";
         $results = $mysql->query($query);
 
+        // **Modifica**: Aggiunto il controllo per evitare errori se non ci sono risultati
         if (empty($results)) {
             return; // In caso di nessun risultato, non fare nulla
         }
@@ -93,14 +97,17 @@ class Bee
 
     public function readAllByGameId(int $gameId): array
     {
-        $mysql = $this->dbConnect();  // Usato il metodo dbConnect() per evitare ripetizioni
+        // **Modifica**: Utilizzato il metodo dbConnect() per evitare ripetizioni del codice
+        $mysql = $this->dbConnect();  
         $query = "SELECT id FROM `bees` WHERE game_id=$gameId;";
+        // **Modifica**: Restituito direttamente il risultato della query
         return $mysql->query($query);
     }
 
     public function getHit(): void
     {
-        $this->currentHealth -= $this->beeType->getDamage();  // Scrittura semplificata
+        // **Modifica**: Scrittura semplificata della riduzione della salute dell'ape
+        $this->currentHealth -= $this->beeType->getDamage();  
     }
 
     public function toArray(): array

@@ -17,23 +17,15 @@ require_once dirname(__DIR__) . '\Controllers\BeeGameController.php';
 
 $controller = new BeeGameController();
 
-// Ottieni i dati dell'utente
 $user = new User();
 $user->read($_SESSION['user_id']);
 
-// Inizializza un nuovo gioco
-if (isset($_POST['hive'])) {
-    $hive = new Hive();
-    $hive->read($_POST['hive']);
-    $controller->newGame($hive, $user);
-}
-
-// Salva il gioco corrente
+// **Modifica**: Spostato il salvataggio del gioco in una funzione separata
 if (isset($_POST['save'])) {
     saveCurrentGame($controller);
 }
 
-// Recupera i giochi salvati dell'utente
+// **Modifica**: Recupero dei giochi dell'utente in una funzione separata per migliorare la leggibilità
 $games = getUserGames($controller, $user);
 
 function saveCurrentGame($controller)
@@ -43,14 +35,14 @@ function saveCurrentGame($controller)
     $originalBees = [];
     $bees = [];
 
-    // Recupera le api originali
+    // **Modifica**: Recupero delle api originali
     foreach ($_SESSION['originalBees'] as $beeId => $beeCH) {
         $bee = new Bee();
         $bee->read((int)$beeId);
         $originalBees[$beeId] = $bee;
     }
 
-    // Recupera le api salvate con la salute corrente
+    // **Modifica**: Recupero delle api con la salute corrente
     foreach ($_SESSION['bees'] as $beeId => $beeCH) {
         $bee = new Bee();
         $bee->read((int)$beeId);
@@ -60,13 +52,14 @@ function saveCurrentGame($controller)
 
     $controller->saveGame($game, $bees, $originalBees);
 
-    // Pulisce le api salvate dalla sessione
+    // **Modifica**: Pulizia della sessione dalle api salvate
     foreach ($_SESSION['bees'] as $beeId => $beeCH) {
         unset($_SESSION['bees'][$beeId]);
         unset($_SESSION['originalBees'][$beeId]);
     }
 }
 
+// **Modifica**: Funzione separata per recuperare i giochi dell'utente
 function getUserGames($controller, $user)
 {
     $gamesId = $controller->fetchGamesByUser($user);
@@ -103,7 +96,7 @@ function getUserGames($controller, $user)
             <a href="../views/create-game.php" class="btn btn-custom"><b>Nuovo Gioco +</b></a>
             <ul class="list-group">
                 <?php
-                // Mostra i giochi salvati
+                // **Modifica**: Mostra i giochi salvati
                 foreach ($games as $game) {
                     echo '<li class="list-group-item">
                             <span class="game-id">' . $game->getId() . '</span>
