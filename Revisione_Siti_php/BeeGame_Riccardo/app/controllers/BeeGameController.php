@@ -147,7 +147,7 @@ class BeeGameController
         return true;
     }
 
-    // DEPRECATED: Vecchia funzione che verificava lo stato di vittoria nella vecchia versione statica del gioco
+    // RIMOSSA: Vecchia funzione che verificava lo stato di vittoria nella vecchia versione statica del gioco
     public function checkVictory(array $bees): bool
     {
         $victory = true;

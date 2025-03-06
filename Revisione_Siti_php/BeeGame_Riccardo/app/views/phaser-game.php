@@ -65,14 +65,10 @@ $hiveDiff = $game->getHive()->getId();
         function shuffle(array) {
             let currentIndex = array.length;
 
-            // While there remain elements to shuffle...
             while (currentIndex != 0) {
-
-                // Pick a remaining element...
                 let randomIndex = Math.floor(Math.random() * currentIndex);
                 currentIndex--;
 
-                // And swap it with the current element.
                 [array[currentIndex], array[randomIndex]] = [
                     array[randomIndex], array[currentIndex]
                 ];
@@ -272,10 +268,9 @@ $hiveDiff = $game->getHive()->getId();
                         break;
                 }
 
-                // Create a path that forms a figure-eight
                 enemy.path = new Phaser.Curves.Path(x, y);
-                enemy.path.ellipseTo(50, 70, 0, 360, true, 0); // First loop
-                enemy.path.ellipseTo(-50, 70, 0, 360, true, 0); // Second loop
+                enemy.path.ellipseTo(50, 70, 0, 360, true, 0); 
+                enemy.path.ellipseTo(-50, 70, 0, 360, true, 0);
 
                 enemy.follower = {
                     t: 0,
@@ -286,7 +281,7 @@ $hiveDiff = $game->getHive()->getId();
                     targets: enemy.follower,
                     t: 1,
                     ease: 'linear',
-                    duration: ((Math.random() * 2) + 4) * 1000 - (150 * round * difficulty), // Speed of movement
+                    duration: ((Math.random() * 2) + 4) * 1000 - (150 * round * difficulty),
                     yoyo: false,
                     repeat: -1
                 });
@@ -492,7 +487,7 @@ $hiveDiff = $game->getHive()->getId();
         }
 
         function hitPlayer(player, sting) {
-            if (!sting) return; // Ensure sting is defined
+            if (!sting) return; 
             lives -= 1;
             sting.destroy();
             livesText.text = `Lives: ${lives}`
